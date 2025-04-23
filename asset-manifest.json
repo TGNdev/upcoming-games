@@ -1,16 +1,13 @@
 {
   "files": {
-    "main.css": "/game-track-2025/static/css/main.f855e6bc.css",
-    "main.js": "/game-track-2025/static/js/main.574814f1.js",
-    "static/js/453.4dd112cf.chunk.js": "/game-track-2025/static/js/453.4dd112cf.chunk.js",
-    "static/media/logo.svg": "/game-track-2025/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "main.css": "/game-track-2025/static/css/main.5c91e907.css",
+    "main.js": "/game-track-2025/static/js/main.58260610.js",
     "index.html": "/game-track-2025/index.html",
-    "main.f855e6bc.css.map": "/game-track-2025/static/css/main.f855e6bc.css.map",
-    "main.574814f1.js.map": "/game-track-2025/static/js/main.574814f1.js.map",
-    "453.4dd112cf.chunk.js.map": "/game-track-2025/static/js/453.4dd112cf.chunk.js.map"
+    "main.5c91e907.css.map": "/game-track-2025/static/css/main.5c91e907.css.map",
+    "main.58260610.js.map": "/game-track-2025/static/js/main.58260610.js.map"
   },
   "entrypoints": [
-    "static/css/main.f855e6bc.css",
-    "static/js/main.574814f1.js"
+    "static/css/main.5c91e907.css",
+    "static/js/main.58260610.js"
   ]
 }
