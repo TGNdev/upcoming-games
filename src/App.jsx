@@ -13,7 +13,7 @@ const App = () => (
           <h1 className="text-xl font-bold">Game Track 2025</h1>
         </Link>
         <Link
-          to={localStorage.getItem("admin") === "true" ? "/admin" : "/login"}
+          to={localStorage.getItem("admin") == "true" ? "/admin" : "/login"}
           className="hover:underline transition-opacity opacity-80">Add a game</Link>
       </nav>
       <main className="flex-1 overflow-auto">
