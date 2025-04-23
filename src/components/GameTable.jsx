@@ -50,10 +50,19 @@ const GameTable = ({ games }) => {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        <div className="flex items-center gap-2">
+          <label htmlFor="edit" className="text-muted">Edit Mode</label>
+          <input
+            type="checkbox"
+            name="edit"
+            id="edit"
+            className="w-4 h-4 accent-highlight"
+          />
+        </div>
       </div>
 
       <table className="w-full table-auto border-collapse overflow-auto">
-        <thead className="sticky top-0 bg-background border-b border-muted">
+        <thead className="border-b border-muted">
           <tr>
             <th className="p-3">Name</th>
             <th className="p-3">Release Date</th>
@@ -64,7 +73,6 @@ const GameTable = ({ games }) => {
               <div>Ratings</div>
               <div className="flex flex-row gap-x-3 justify-center">
                 <div className="text-xs opacity-50">Critics</div>
-                <div className="text-xs opacity-50">Recommend</div>
                 <div className="text-xs opacity-50">Players</div>
               </div>
             </th>

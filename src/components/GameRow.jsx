@@ -50,9 +50,31 @@ const GameRow = ({ game }) => (
         <div className="hover:scale-105 transition">{game.name}</div>
       </a>
     </td>
-    <td className="p-3">{game.releaseDate}</td>
-    <td className="p-3"></td>
-    <td className="p-3"></td>
+    <td className="p-3">
+      {new Date(game.release_date.seconds * 1000).toLocaleDateString("en-EN", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })}
+    </td>
+    <td className="p-3">
+      <div className="flex flex-col space-y-2">
+        {game.developers.map((developer, index) => (
+          <a href={developer.link} key={index}>
+            <div>{developer.name}</div>
+          </a>
+        ))}
+      </div>
+    </td>
+    <td className="p-3">
+      <div className="flex flex-col space-y-2">
+        {game.editors.map((editor, index) => (
+          <a href={editor.link} key={index}>
+            <div>{editor.name}</div>
+          </a>
+        ))}
+      </div>
+    </td>
     <td className="p-3">
       <div className="flex flex-row gap-2 justify-center">
         {Object.keys(game.platforms)
@@ -64,7 +86,7 @@ const GameRow = ({ game }) => (
     <td className="p-3">
       <a href={game.ratings.link}>
         <div className="flex flex-row gap-3 justify-center">
-          {["critics", "recommend", "players"].map((ratingType, index) => (
+          {["critics", "players"].map((ratingType, index) => (
             <div key={index} className={getRatingStyle(game.ratings[ratingType])}>
               {ratingType === "recommend" ? `${game.ratings[ratingType]}%` : game.ratings[ratingType]}
             </div>
