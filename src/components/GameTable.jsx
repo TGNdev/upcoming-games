@@ -4,9 +4,12 @@ import GameRow from "./GameRow";
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
 
-  const filtered = games.filter(game =>
-    game.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = games
+    .filter(game =>
+      game.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => new Date(a.release_date.seconds * 1000) - new Date(b.release_date.seconds * 1000));
+  
   const featured = filtered.reduce((closest, game) => {
     const today = new Date();
     const release = new Date(game.release_date.seconds * 1000);
@@ -36,7 +39,7 @@ const GameTable = ({ games }) => {
       {/* Featured section */}
       {featured && (
         <div className="mb-6 bg-muted rounded-xl p-4 shadow-lg">
-          <h2 className="text-2xl font-bold text-highlight">{featured.name}</h2>
+          <h2 className="text-2xl font-bold">{featured.name}</h2>
           <p className="text-sm opacity-70">{getReleaseMessage()}</p>
         </div>
       )}
@@ -44,7 +47,7 @@ const GameTable = ({ games }) => {
       {/* Search bar */}
       <div className="flex justify-end mb-2">
         <input
-          className="px-3 py-1 rounded bg-background border border-accent text-accent placeholder:text-muted"
+          className="px-3 py-1 rounded border"
           type="text"
           placeholder="Search games..."
           value={search}
@@ -53,7 +56,7 @@ const GameTable = ({ games }) => {
       </div>
 
       <table className="w-full table-auto border-collapse overflow-auto">
-        <thead className="border-b border-muted">
+        <thead className="border-b">
           <tr>
             <th className="p-3">Name</th>
             <th className="p-3">Release Date</th>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { addGameToFirestore } from "../firebase/firebase";
 import { Timestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const platformOptions = ["pc", "ps", "xbox", "switch", "switch_2"];
 const platformLabels = {
@@ -21,8 +22,8 @@ const AddGameForm = () => {
     platforms: platformOptions.reduce((acc, platform) => ({ ...acc, [platform]: false }), {}),
     ratings: { critics: 0, players: 0, link: "" },
   });
-
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,7 +95,8 @@ const AddGameForm = () => {
         platforms: form.platforms,
         ratings: form.ratings,
       });
-      window.location.href = "/";
+
+      navigate("/game-track-2025");
     } catch (err) {
       console.error("Failed to add game:", err);
     }
@@ -102,14 +104,14 @@ const AddGameForm = () => {
 
   return (
     <div className="bg-muted p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-highlight">Add a new game</h2>
+      <h2 className="text-2xl font-bold mb-4">Add a new game</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Info */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col">
-            <label className="block text-sm mb-2 text-muted">Name</label>
+            <label className="block text-sm mb-2">Name</label>
             <input
-              className="px-4 py-2 rounded border border-accent"
+              className="px-4 py-2 rounded border"
               name="name"
               value={form.name}
               placeholder="with full notation (don't forget ':' or correct numbering such as 'VI' or '6')"
@@ -119,9 +121,9 @@ const AddGameForm = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="block text-sm mb-2 text-muted">Link</label>
+            <label className="block text-sm mb-2">Link</label>
             <input
-              className="px-4 py-2 rounded border border-accent"
+              className="px-4 py-2 rounded border"
               name="link"
               placeholder="Game website (or IGN page if no website)"
               value={form.link}
@@ -131,11 +133,11 @@ const AddGameForm = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="block text-sm mb-2 text-muted">Release date</label>
+            <label className="block text-sm mb-2">Release date</label>
             <input
               type="date"
               name="releaseDate"
-              className="px-4 py-2 rounded border border-accent"
+              className="px-4 py-2 rounded border"
               value={form.releaseDate}
               onChange={handleChange}
             />
@@ -145,7 +147,7 @@ const AddGameForm = () => {
 
         <div>
           {/* Platform toggle buttons */}
-          <label className="block text-sm mb-2 text-muted">Platforms</label>
+          <label className="block text-sm mb-2">Platforms</label>
           <div className="flex flex-wrap gap-2">
             {platformOptions.map((platform) => (
               <button
@@ -164,18 +166,18 @@ const AddGameForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm mb-2 text-muted">Developers</label>
+          <label className="block text-sm mb-2">Developers</label>
           {form.developers.map((dev, i) => (
             <div key={i} className="flex flex-row gap-2 mb-2 items-center">
               <input
                 placeholder="Name"
-                className="px-3 py-1 rounded border border-accent w-full"
+                className="px-3 py-1 rounded border w-full"
                 value={dev.name}
                 onChange={(e) => updateEntry("developers", i, "name", e.target.value)}
               />
               <input
                 placeholder="Link"
-                className="px-3 py-1 rounded border border-accent w-full"
+                className="px-3 py-1 rounded border w-full"
                 value={dev.link}
                 onChange={(e) => updateEntry("developers", i, "link", e.target.value)}
               />
@@ -200,14 +202,14 @@ const AddGameForm = () => {
 
         {/* Editors */}
         <div>
-          <label className="block text-sm mb-2 text-muted">Editors</label>
+          <label className="block text-sm mb-2">Editors</label>
           {form.editors.map((ed, i) => (
             <div key={i} className="grid grid-cols-2 gap-2 mb-2">
               <label htmlFor={`editor-name-${i}`} className="sr-only">Editor Name</label>
               <input
                 id={`editor-name-${i}`}
                 placeholder="Name"
-                className="px-3 py-1 rounded border border-accent"
+                className="px-3 py-1 rounded border"
                 value={ed.name}
                 onChange={(e) => updateEntry("editors", i, "name", e.target.value)}
               />
@@ -215,7 +217,7 @@ const AddGameForm = () => {
               <input
                 id={`editor-link-${i}`}
                 placeholder="Link"
-                className="px-3 py-1 rounded border border-accent"
+                className="px-3 py-1 rounded border"
                 value={ed.link}
                 onChange={(e) => updateEntry("editors", i, "link", e.target.value)}
               />
@@ -225,7 +227,7 @@ const AddGameForm = () => {
             <button
               type="button"
               onClick={() => addEntry("editors")}
-              className="text-sm text-highlight underline"
+              className="text-sm underline"
             >
               + Add Editor
             </button>
@@ -235,10 +237,10 @@ const AddGameForm = () => {
 
         {/* Ratings */}
         <div>
-          <label className="block text-sm mb-2 text-muted">Ratings</label>
+          <label className="block text-sm mb-2">Ratings</label>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <label className="text-xs text-muted mb-1" htmlFor="ratings.critics">Critics</label>
+              <label className="text-xs mb-1" htmlFor="ratings.critics">Critics</label>
               <input
                 id="ratings.critics"
                 name="ratings.critics"
@@ -252,7 +254,7 @@ const AddGameForm = () => {
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs text-muted mb-1" htmlFor="ratings.players">Players</label>
+              <label className="text-xs mb-1" htmlFor="ratings.players">Players</label>
               <input
                 id="ratings.players"
                 name="ratings.players"

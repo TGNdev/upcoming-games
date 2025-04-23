@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+console.log(localStorage.getItem("admin"))
   const handleLogin = () => {
-    if (password === "admin123") {
+    if (password === process.env.REACT_APP_ADMIN_PASSWORD) {
       localStorage.setItem("admin", "true");
       navigate("/admin");
     } else {
