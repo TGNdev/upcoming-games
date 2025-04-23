@@ -96,7 +96,7 @@ const AddGameForm = () => {
         ratings: form.ratings,
       });
 
-      navigate("/game-track-2025");
+      navigate("/");
     } catch (err) {
       console.error("Failed to add game:", err);
     }
@@ -221,6 +221,11 @@ const AddGameForm = () => {
                 value={ed.link}
                 onChange={(e) => updateEntry("editors", i, "link", e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => removeEntry("editors", i)}
+                className="text-sm hover:scale-105 transition"
+              >Remove</button>
             </div>
           ))}
           <div className="flex flex-col gap-2 items-start">
