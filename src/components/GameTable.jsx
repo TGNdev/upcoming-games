@@ -50,15 +50,6 @@ const GameTable = ({ games }) => {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <div className="flex items-center gap-2">
-          <label htmlFor="edit" className="text-muted">Edit Mode</label>
-          <input
-            type="checkbox"
-            name="edit"
-            id="edit"
-            className="w-4 h-4 accent-highlight"
-          />
-        </div>
       </div>
 
       <table className="w-full table-auto border-collapse overflow-auto">
