@@ -1,12 +1,12 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 
 const App = () => (
-  <BrowserRouter basename="/game-track-2025">
+  <HashRouter>
     <div className="min-h-screen flex flex-col">
       <nav className="flex justify-between items-center px-6 py-4 shadow">
         <Link to="/">
@@ -28,7 +28,7 @@ const App = () => (
         </Routes>
       </main>
     </div>
-  </BrowserRouter>
+  </HashRouter>
 );
 
 export default App;
