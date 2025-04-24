@@ -35,7 +35,12 @@ const GameCard = ({ game, opened }) => {
     setIsOpen(opened);
   }, [opened]);
 
-  const isReleased = () => new Date(game.release_date.seconds * 1000) <= new Date();
+  const isReleased = () => {
+    const today = new Date();
+    const releaseDate = new Date(game.release_date.seconds * 1000);
+    return releaseDate < today;
+  };
+  
   const platforms = Object.keys(game.platforms).filter(p => game.platforms[p]);
 
   return (
@@ -59,9 +64,13 @@ const GameCard = ({ game, opened }) => {
       </button>
 
       {/* Released badge */}
-      {isReleased() && (
+      {isReleased() ? (
         <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded z-20">
           Released
+        </div>
+      ) : (
+        <div className="absolute top-0 left-0 bg-amber-400 text-white text-xs font-bold px-1.5 py-0.5 rounded z-20">
+          Coming soon
         </div>
       )}
 

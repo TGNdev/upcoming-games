@@ -17,8 +17,8 @@ const AddGameForm = () => {
     name: "",
     link: "",
     releaseDate: "",
-    developers: [],
-    editors: [],
+    developers: [{}],
+    editors: [{}],
     platforms: platformOptions.reduce((acc, platform) => ({ ...acc, [platform]: false }), {}),
     ratings: { critics: 0, players: 0, link: "" },
   });
@@ -65,7 +65,6 @@ const AddGameForm = () => {
     const errs = {};
     if (!form.name) errs.name = "Name is required";
     if (!form.link) errs.link = "Link is required";
-    if (!form.releaseDate) errs.releaseDate = "Release date is required";
     if (!Object.values(form.platforms).some(Boolean)) {
       errs.platforms = "Select at least one platform";
     }

@@ -44,7 +44,7 @@ const GameRow = ({ game, edit }) => {
   const isReleased = () => {
     const today = new Date();
     const releaseDate = new Date(game.release_date.seconds * 1000);
-    return releaseDate <= today;
+    return releaseDate < today;
   };
 
   return (
@@ -68,12 +68,19 @@ const GameRow = ({ game, edit }) => {
         </td>
       ) : (
         <td className="p-3 sticky left-0 bg-white z-20">
-          {isReleased() && (
+          {isReleased() ? (
             <div
               className="absolute top-0 left-0 z-30 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded transform -rotate-12 shadow-lg"
               style={{ transformOrigin: "left top" }}
             >
               Released
+            </div>
+          ) : (
+            <div
+              className="absolute top-0 left-0 z-30 bg-amber-400 text-white text-xs font-bold px-2 py-1 rounded transform -rotate-12 shadow-lg"
+              style={{ transformOrigin: "left top" }}
+            >
+              Coming soon
             </div>
           )}
           <a href={game.link}>

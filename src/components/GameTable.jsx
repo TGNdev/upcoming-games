@@ -15,9 +15,18 @@ const GameTable = ({ games }) => {
       game.developers.some(dev => dev.name.toLowerCase().includes(search.toLowerCase())) ||
       game.editors.some(editor => editor.name.toLowerCase().includes(search.toLowerCase()))
     )
-    .sort((a, b) => new Date(a.release_date.seconds * 1000) - new Date(b.release_date.seconds * 1000));
+    .sort((a, b) => {
+      const dateA = new Date(a.release_date.seconds * 1000);
+      const dateB = new Date(b.release_date.seconds * 1000);
+
+      if (dateA - dateB !== 0) {
+        return dateA - dateB;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
   
-  const featured = filtered.reduce((closest, game) => {
+  const featured = games.reduce((closest, game) => {
     const today = new Date();
     const release = new Date(game.release_date.seconds * 1000);
     const diffTime = release - today;
@@ -45,7 +54,7 @@ const GameTable = ({ games }) => {
     <div className="flex flex-col items-end p-6 max-w-full overflow-x-auto gap-10">
       {/* Search bar */}
       <input
-        className="px-3 py-1 rounded border w-full sm:max-w-[500px]"
+        className="px-3 py-1 rounded border w-full sm:w-2/3 lg:w-2/5"
         type="text"
         placeholder="Search games..."
         value={search}
@@ -53,31 +62,31 @@ const GameTable = ({ games }) => {
       />
 
       {/* Featured section */}
-      {featured && (
+      {/* {featured && (
         <div className="rounded-xl p-4 shadow-lg">
           <h2 className="text-2xl font-bold">{featured.name}</h2>
-          <p className="text-sm opacity-70">{getReleaseMessage()}</p>
+          <p className="text-sm opacity-70">{getReleaseMessage(featured.release_date)}</p>
         </div>
-      )}
+      )} */}
 
-      <div className="flex flex-row justify-between min-w-full">
+      <div className="flex flex-row justify-between min-w-full -mb-4 sm:px-7">
         <div>
           <button
             type="button"
-            className="sm:hidden"
+            className={`${opened ? "animate-pulse bg-amber-400" : "bg-blue-500"} text-sm hover:scale-110 transition text-white px-2 py-1 rounded-md sm:hidden`}
             onClick={() => setOpened(prev => !prev)}
-            >
+          >
             {opened ? "Collaspe all" : "Expand all"}
           </button>
         </div>
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row items-center gap-2">
           <button
-            className="p-1 bg-green-500 text-white rounded-md hover:scale-110 transition"
+            className="size-6 p-1 bg-green-500 text-white rounded-md hover:scale-110 transition"
           >
             <FaPlus />
           </button>
           <button
-            className="p-1 bg-amber-400 text-white rounded-md hover:scale-110 transition"
+            className="size-6 p-1 bg-amber-400 text-white rounded-md hover:scale-110 transition"
           >
             <AiFillEdit />
           </button>
@@ -114,7 +123,7 @@ const GameTable = ({ games }) => {
       </div>
 
       {/* Cards */}
-      <div className="overflow-y-auto min-w-full sm:hidden pb-8">
+      <div className="overflow-y-auto min-w-full sm:hidden pb-8 -mt-8">
         <div className="flex flex-col gap-5">
           {filtered.map(game => (
             <GameCard key={game.id} game={game} edit={edit} opened={opened} />
