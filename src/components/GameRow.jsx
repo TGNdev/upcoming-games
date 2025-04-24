@@ -123,7 +123,7 @@ const GameRow = ({ game, edit }) => {
         <td className="p-3">
           <div className="flex flex-col divide-y">
             {game.developers.map((developer, index) => (
-              <a href={developer.link} key={index} className={game.developers.length > 1 && "py-1.5"}>
+              <a href={developer.link} key={index} className={game.developers.length > 1 ? "py-1.5" : ""}>
                 <div className="hover:scale-110 transition text-sm">{developer.name}</div>
               </a>
             ))}
@@ -152,7 +152,7 @@ const GameRow = ({ game, edit }) => {
         <td className="p-3">
           <div className="flex flex-col divide-y">
             {game.editors.map((editor, index) => (
-              <a href={editor.link} key={index} className={game.editors.length > 1 && "py-1.5"}>
+              <a href={editor.link} key={index} className={game.editors.length > 1 ? "py-1.5" : ""}>
                 <div className="hover:scale-110 transition text-sm">{editor.name}</div>
               </a>
             ))}
