@@ -77,7 +77,7 @@ const GameRow = ({ game, edit }) => {
             </div>
           )}
           <a href={game.link}>
-            <div className="hover:scale-110 transition text-sm md:text-base">{game.name}</div>
+            <div className="hover:scale-110 transition text-base">{game.name}</div>
           </a>
         </td>
       )}
@@ -162,20 +162,22 @@ const GameRow = ({ game, edit }) => {
       {edit ? (
         <td className="p-3">
           <div className="flex flex-row gap-2 justify-center flex-wrap">
-            {platforms.map((platform) => {
-              const isActive = game.platforms[platform];
+            {platforms.sort()
+              .map((platform) => {
+                const isActive = game.platforms[platform];
                 return (
-                <button
-                  key={platform}
-                  className={`relative ${isActive ? "opacity-100" : "opacity-20"} flex items-center gap-1 rounded hover:scale-110 transition`}
-                  onClick={() => {
-                    alert("Coming Soon ...")
-                  }}
-                >
-                  {getPlatformsSvg(platform)}
-                </button>
+                  <button
+                    key={platform}
+                    className={`relative ${isActive ? "opacity-100" : "opacity-20"} flex items-center gap-1 rounded hover:scale-110 transition`}
+                    onClick={() => {
+                      alert("Coming Soon ...")
+                    }}
+                  >
+                    {getPlatformsSvg(platform)}
+                  </button>
                 );
-            })}
+              })
+            }
           </div>
         </td>
       ) : (

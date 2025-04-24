@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import GameRow from "./GameRow";
+import GameCard from "./GameCard";
 
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
@@ -48,7 +49,7 @@ const GameTable = ({ games }) => {
       )}
   
       {/* Search bar */}
-      <div className="flex flex-col items-end min-w-[500px] gap-2">
+      <div className="flex flex-col items-end w-full sm:max-w-[500px] gap-2">
         <input
           className="px-3 py-1 rounded border w-full"
           type="text"
@@ -56,7 +57,7 @@ const GameTable = ({ games }) => {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <button
+        {/* <button
           className={`px-3 py-2 max-w-fit rounded-lg text-white text-sm hover:scale-105 transition ${edit ? "bg-yellow-500 animate-pulse" : "bg-blue-500"}`}
           type="button"
           onClick={() => setEdit(!edit)}
@@ -64,20 +65,20 @@ const GameTable = ({ games }) => {
           {edit ? "Close Edit Mode" : "Open Edit Mode"}
         </button>
         {edit && (
-          <div className="text-sm">It just transforms texts to inputs. Seriously, you can't even edit anything, it's locked.</div>
-          // <button
-          //   className="px-3 py-2 maw-w-fit rounded-lg text-white text-sm hover:scale-105 transition bg-blue-500"
-          //   type="button"
-          //   onClick={() => alert("Coming soon...")}
-          // >
-          //   Save Edits
-          // </button>
-        )}
+          // <div className="text-sm">It just transforms texts to inputs. Seriously, you can't even edit anything, it's locked.</div>
+          <button
+            className="px-3 py-2 maw-w-fit rounded-lg text-white text-sm hover:scale-105 transition bg-blue-500"
+            type="button"
+            onClick={() => alert("Coming soon...")}
+          >
+            Save Edits
+          </button>
+        )} */}
       </div>
 
       {/* Table */}
-      <div className="relative overflow-x-auto max-w-full">
-        <table className="w-full table-fixed border-collapse min-w-[800px]">
+      <div className="relative overflow-x-auto max-w-full hidden sm:block">
+        <table className="w-full table-fixed border-collapse min-w-[900px]">
           <thead className="border-b">
             <tr>
               <th className="p-3 sticky left-0 bg-white z-10">Name</th>
@@ -100,6 +101,15 @@ const GameTable = ({ games }) => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Cards */}
+      <div className="overflow-y-auto min-w-full sm:hidden pb-8">
+        <div className="flex flex-col gap-5">
+          {filtered.map(game => (
+            <GameCard key={game.id} game={game} edit={edit} />
+          ))}
+        </div>
       </div>
     </div>
   );
