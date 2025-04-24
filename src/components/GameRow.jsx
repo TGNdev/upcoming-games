@@ -221,9 +221,13 @@ const GameRow = ({ game, edit }) => {
                 </div>
               ))}
             </div>
-            <a href={game.ratings.link}>
-              <div className="text-xs text-slate-500 hover:scale-110 transition"><span className="font-normal">Details on</span> <span className="font-bold">OpenCritic</span></div>
-            </a>
+            {game.ratings.link ? (
+              <a href={game.ratings.link}>
+                <div className="text-xs text-slate-500 hover:scale-110 transition"><span className="font-normal">Details on</span> <span className="font-bold">OpenCritic</span></div>
+              </a>
+            ) : (
+              <div className="text-xs text-slate-500">Edit to add link</div>
+            )}
           </div>
         </td>
       )}

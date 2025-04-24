@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import GameRow from "./GameRow";
 import GameCard from "./GameCard";
+import { FaPlus } from "react-icons/fa6";
+import { AiFillEdit } from "react-icons/ai";
 
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
   const [edit, setEdit] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   const filtered = games
     .filter(game =>
@@ -40,6 +43,15 @@ const GameTable = ({ games }) => {
 
   return (
     <div className="flex flex-col items-end p-6 max-w-full overflow-x-auto gap-10">
+      {/* Search bar */}
+      <input
+        className="px-3 py-1 rounded border w-full sm:max-w-[500px]"
+        type="text"
+        placeholder="Search games..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+      />
+
       {/* Featured section */}
       {featured && (
         <div className="rounded-xl p-4 shadow-lg">
@@ -47,67 +59,65 @@ const GameTable = ({ games }) => {
           <p className="text-sm opacity-70">{getReleaseMessage()}</p>
         </div>
       )}
-  
-      {/* Search bar */}
-      <div className="flex flex-col items-end w-full sm:max-w-[500px] gap-2">
-        <input
-          className="px-3 py-1 rounded border w-full"
-          type="text"
-          placeholder="Search games..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        {/* <button
-          className={`px-3 py-2 max-w-fit rounded-lg text-white text-sm hover:scale-105 transition ${edit ? "bg-yellow-500 animate-pulse" : "bg-blue-500"}`}
-          type="button"
-          onClick={() => setEdit(!edit)}
-        >
-          {edit ? "Close Edit Mode" : "Open Edit Mode"}
-        </button>
-        {edit && (
-          // <div className="text-sm">It just transforms texts to inputs. Seriously, you can't even edit anything, it's locked.</div>
+
+      <div className="flex flex-row justify-between min-w-full">
+        <div>
           <button
-            className="px-3 py-2 maw-w-fit rounded-lg text-white text-sm hover:scale-105 transition bg-blue-500"
             type="button"
-            onClick={() => alert("Coming soon...")}
-          >
-            Save Edits
+            className="sm:hidden"
+            onClick={() => setOpened(prev => !prev)}
+            >
+            {opened ? "Collaspe all" : "Expand all"}
           </button>
-        )} */}
+        </div>
+        <div className="flex flex-row gap-2">
+          <button
+            className="p-1 bg-green-500 text-white rounded-md hover:scale-110 transition"
+          >
+            <FaPlus />
+          </button>
+          <button
+            className="p-1 bg-amber-400 text-white rounded-md hover:scale-110 transition"
+          >
+            <AiFillEdit />
+          </button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="relative overflow-x-auto max-w-full hidden sm:block">
-        <table className="w-full table-fixed border-collapse min-w-[900px]">
-          <thead className="border-b">
-            <tr>
-              <th className="p-3 sticky left-0 bg-white z-10">Name</th>
-              <th className="p-3">Release Date</th>
-              <th className="p-3">Developers</th>
-              <th className="p-3">Editors</th>
-              <th className="p-3">Platforms</th>
-              <th className="p-3 flex flex-col">
-                <div>Ratings</div>
-                <div className="flex flex-row gap-x-3 justify-center">
-                  <div className="text-xs opacity-50">Critics</div>
-                  <div className="text-xs opacity-50">Players</div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(game => (
-              <GameRow key={game.id} game={game} edit={edit} />
-            ))}
-          </tbody>
-        </table>
+      <div className="flex flex-col max-w-full overflow-x-auto">
+        <div className="relative hidden sm:block">
+          <table className="w-full table-fixed border-collapse min-w-[900px]">
+            <thead className="border-b">
+              <tr>
+                <th className="p-3 sticky left-0 bg-white z-10">Name</th>
+                <th className="p-3">Release Date</th>
+                <th className="p-3">Developers</th>
+                <th className="p-3">Editors</th>
+                <th className="p-3">Platforms</th>
+                <th className="p-3 flex flex-col">
+                  <div>Ratings</div>
+                  <div className="flex flex-row gap-x-3 justify-center">
+                    <div className="text-xs opacity-50">Critics</div>
+                    <div className="text-xs opacity-50">Players</div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(game => (
+                <GameRow key={game.id} game={game} edit={edit} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Cards */}
       <div className="overflow-y-auto min-w-full sm:hidden pb-8">
         <div className="flex flex-col gap-5">
           {filtered.map(game => (
-            <GameCard key={game.id} game={game} edit={edit} />
+            <GameCard key={game.id} game={game} edit={edit} opened={opened} />
           ))}
         </div>
       </div>

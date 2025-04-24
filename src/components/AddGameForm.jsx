@@ -204,20 +204,16 @@ const AddGameForm = () => {
         <div>
           <label className="block text-sm mb-2">Editors</label>
           {form.editors.map((ed, i) => (
-            <div key={i} className="grid grid-cols-2 gap-2 mb-2">
-              <label htmlFor={`editor-name-${i}`} className="sr-only">Editor Name</label>
+            <div key={i} className="flex flex-row gap-2 mb-2 items-center">
               <input
-                id={`editor-name-${i}`}
                 placeholder="Name"
-                className="px-3 py-1 rounded border"
+                className="px-3 py-1 rounded border w-full"
                 value={ed.name}
                 onChange={(e) => updateEntry("editors", i, "name", e.target.value)}
               />
-              <label htmlFor={`editor-link-${i}`} className="sr-only">Editor Link</label>
               <input
-                id={`editor-link-${i}`}
                 placeholder="Link"
-                className="px-3 py-1 rounded border"
+                className="px-3 py-1 rounded border w-full"
                 value={ed.link}
                 onChange={(e) => updateEntry("editors", i, "link", e.target.value)}
               />
@@ -271,6 +267,17 @@ const AddGameForm = () => {
                 min={0}
                 max={100}
               />
+            </div>
+            <div className="flex flex-col col-span-2">
+              <label className="text-xs mb-1" htmlFor="ratings.link">OpenCritic link</label>
+              <input
+                id="ratings.link"
+                name="ratings.link"
+                type="text"
+                value={form.ratings.link}
+                onChange={handleChange}
+                className="px-3 py-2 rounded border"
+                />
             </div>
           </div>
         </div>

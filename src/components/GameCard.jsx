@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ReactComponent as XboxIcon } from "../assets/icons/xbox.svg";
 import { ReactComponent as PsIcon } from "../assets/icons/ps.svg";
 import { ReactComponent as PcIcon } from "../assets/icons/pc.svg";
 import { ReactComponent as SwitchIcon } from "../assets/icons/switch.svg";
 import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { FiChevronDown } from "react-icons/fi";
-import { FaCheck } from "react-icons/fa";
 import { FaThumbsUp } from "react-icons/fa6";
-import { FaThumbsDown } from "react-icons/fa6";
 
 const getPlatformsSvg = (platform) => {
   const base = "size-8 rounded p-1.5";
@@ -27,11 +25,15 @@ const getPlatformsSvg = (platform) => {
   }
 };
 
-const GameCard = ({ game }) => {
+const GameCard = ({ game, opened }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showDevs, setShowDevs] = useState(false);
   const [showEditors, setShowEditors] = useState(false);
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(opened);
+  }, [opened]);
 
   const isReleased = () => new Date(game.release_date.seconds * 1000) <= new Date();
   const platforms = Object.keys(game.platforms).filter(p => game.platforms[p]);
@@ -65,7 +67,7 @@ const GameCard = ({ game }) => {
 
       {/* Content drawer */}
       <div
-        className={`grid transition-all duration-500 ease-in-out overflow-hidden ${
+        className={`grid transition-all duration-500 ease-in-out overflow-hidden border-x ${
           isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         }`}
       >
@@ -157,11 +159,11 @@ const GameCard = ({ game }) => {
             <div className="w-1/3 flex flex-col items-center justify-center gap-3">
               {["critics", "players"].map((type, idx) => {
                 const rating = game.ratings[type];
-                const bgClass = rating === 0 ? "bg-gray-300" :
+                const bgClass = rating == 0 ? "bg-gray-300" :
                   rating < 70 ? "bg-red-500" :
                   rating < 80 ? "bg-amber-400" :
                   rating < 90 ? "bg-green-400" : "bg-green-600";
-                const ringClass = rating === 0 ? "bg-gray-400" :
+                const ringClass = rating == 0 ? "bg-gray-400" :
                   rating < 70 ? "bg-red-600" :
                   rating < 80 ? "bg-amber-500" :
                   rating < 90 ? "bg-green-500" : "bg-green-700";
@@ -174,7 +176,7 @@ const GameCard = ({ game }) => {
                           <FaThumbsUp />
                         </div>
                       )}
-                      {rating === 0 ? "/" : rating}
+                      {rating == 0 ? "/" : rating}
                     </div>
                   </div>
                 );

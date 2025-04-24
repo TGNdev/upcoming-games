@@ -8,14 +8,16 @@ import PrivateRoute from "./routes/PrivateRoute";
 const App = () => (
   <HashRouter>
     <div className="min-h-screen flex flex-col">
-      <nav className="flex justify-between items-center px-6 py-4 shadow">
-        <Link to="/">
-          <h1 className="text-xl font-bold">Game Track 2025</h1>
-        </Link>
-        <Link
-          to={localStorage.getItem("admin") == "true" ? "/admin" : "/login"}
-          className="hover:underline transition-opacity opacity-80">Add a game</Link>
-      </nav>
+      <div className="sticky top-0 bg-white z-50">
+        <nav className="flex justify-between items-center px-6 py-4 shadow">
+          <Link to="/">
+            <h1 className="text-xl font-bold">Game Track 2025</h1>
+          </Link>
+          <Link
+            to={localStorage.getItem("admin") == "true" ? "/admin" : "/login"}
+            className="hover:underline transition-opacity opacity-80">Add a game</Link>
+        </nav>
+      </div>
       <main className="flex-1 overflow-auto">
         <Routes>
           <Route path="/" element={<Home />} />
