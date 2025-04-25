@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, snapshotEqual } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import GameTable from "../components/GameTable";
 
@@ -7,14 +7,12 @@ const Home = () => {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
-    const fetchGames = async () => {
-      const snapshot = await getDocs(collection(db, "games"));
+    const unsub = onSnapshot(collection(db, "games"), snapshot => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
       setGames(list);
-    };
+    })
 
-    fetchGames();
+    return () => unsub();
   }, []);
 
   return <GameTable games={games} />;
