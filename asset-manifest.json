@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/game-track-2025/static/css/main.13082be7.css",
-    "main.js": "/game-track-2025/static/js/main.e73d1f92.js",
+    "main.css": "/game-track-2025/static/css/main.0bd6ed28.css",
+    "main.js": "/game-track-2025/static/js/main.1306294e.js",
     "static/media/switch_2.svg": "/game-track-2025/static/media/switch_2.2e32cd1deec1bda9344ab3c12adb8d49.svg",
     "static/media/pc.svg": "/game-track-2025/static/media/pc.e681a3006a006ed4be9b4ac8dd0cffff.svg",
     "static/media/xbox.svg": "/game-track-2025/static/media/xbox.9c2dddcca458f78ff68232d5f6b2d147.svg",
     "static/media/ps.svg": "/game-track-2025/static/media/ps.338660e06aae3ca91e7ead8b6869e653.svg",
     "static/media/switch.svg": "/game-track-2025/static/media/switch.8aa8e498a6c8f08c38bd30996f325e47.svg",
     "index.html": "/game-track-2025/index.html",
-    "main.13082be7.css.map": "/game-track-2025/static/css/main.13082be7.css.map",
-    "main.e73d1f92.js.map": "/game-track-2025/static/js/main.e73d1f92.js.map"
+    "main.0bd6ed28.css.map": "/game-track-2025/static/css/main.0bd6ed28.css.map",
+    "main.1306294e.js.map": "/game-track-2025/static/js/main.1306294e.js.map"
   },
   "entrypoints": [
-    "static/css/main.13082be7.css",
-    "static/js/main.e73d1f92.js"
+    "static/css/main.0bd6ed28.css",
+    "static/js/main.1306294e.js"
   ]
 }
