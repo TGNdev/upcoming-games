@@ -25,15 +25,15 @@ const getPlatformsSvg = (platform) => {
   }
 };
 
-const GameCard = ({ game, opened }) => {
+const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showDevs, setShowDevs] = useState(false);
   const [showEditors, setShowEditors] = useState(false);
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
   useEffect(() => {
-    setIsOpen(opened);
-  }, [opened]);
+    setIsOpen(opened || forceOpen);
+  }, [opened, forceOpen]);
 
   const isReleased = () => {
     const today = new Date();
@@ -44,11 +44,17 @@ const GameCard = ({ game, opened }) => {
   const platforms = Object.keys(game.platforms).filter(p => game.platforms[p]);
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 relative">
+    <div id={`gamecard-${game.id}`} className={`${forceOpen ? "" : ""} bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 relative`}>
       {/* Header (Toggle) */}
       <button
         className="w-full flex justify-between items-center px-7 pt-6 pb-3 text-left bg-slate-100 hover:bg-slate-200 transition"
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={() => {
+          const closing = isOpen && forceOpen;
+          setIsOpen(prev => !prev);
+          if (closing) {
+            setTimeout(() => setForceOpen(), 0);
+          }
+        }}
       >
         <div className="flex flex-col gap-1">
           <span className="text-lg font-bold">{game.name}</span>
@@ -161,7 +167,6 @@ const GameCard = ({ game, opened }) => {
                   </button>
                 )}
               </div>
-
             </div>
 
             {/* Ratings */}

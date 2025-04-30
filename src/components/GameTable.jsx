@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import GameRow from "./GameRow";
 import GameCard from "./GameCard";
-import { FaPlus } from "react-icons/fa6";
+import AddGameForm from "./AddGameForm";
+import Login from "./Login";
+import BackToTopButton from "./BackTopButton";
+import { FaPlus } from "react-icons/fa";
 import { AiFillEdit } from "react-icons/ai";
 
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
   const [edit, setEdit] = useState(false);
   const [opened, setOpened] = useState(false);
-
+  const [featuredOpen, setFeaturedOpen] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
+  const openButtonRef = useRef(null); 
+ 
   const filtered = games
     .filter(game =>
       game.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -25,13 +32,21 @@ const GameTable = ({ games }) => {
 
       return a.name.localeCompare(b.name);
     });
-  
+
   const featured = games.reduce((closest, game) => {
     const today = new Date();
-    const release = new Date(game.release_date.seconds * 1000);
-    const diffTime = release - today;
+    today.setHours(0, 0, 0, 0);
 
-    if (diffTime > 0 && (closest === null || diffTime < closest.diffTime)) {
+    const release = new Date(game.release_date.seconds * 1000);
+    const releaseDate = new Date(release);
+    releaseDate.setHours(0, 0, 0, 0);
+
+    const diffTime = releaseDate - today;
+
+    if (
+      diffTime >= 0 &&
+      (closest === null || diffTime < closest.diffTime)
+    ) {
       return { game, diffTime };
     }
 
@@ -44,11 +59,40 @@ const GameTable = ({ games }) => {
     const diffTime = release - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "Releases today";
+    if (diffDays === 0) return "Releases today !";
     if (diffDays === 1) return "Releases tomorrow";
     if (diffDays > 1) return `Releases in ${diffDays} days`;
     return "Already released";
   };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const useOutsideClick = (callback, exceptions = []) => {
+    const ref = useRef();
+  
+    useEffect(() => {
+      const handleClick = (event) => {
+        const clickedInsideModal = ref.current && ref.current.contains(event.target);
+        const clickedException = exceptions.some(
+          exceptionRef => exceptionRef.current && exceptionRef.current.contains(event.target)
+        );
+  
+        if (!clickedInsideModal && !clickedException) {
+          callback();
+        }
+      };
+  
+      document.addEventListener('click', handleClick);
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }, [callback, exceptions]);
+  
+    return ref;
+  };
+  
+  const modalRef = useOutsideClick(handleCloseModal, [openButtonRef]);
 
   return (
     <div className="flex flex-col items-end p-6 max-w-full overflow-x-auto gap-10">
@@ -62,12 +106,67 @@ const GameTable = ({ games }) => {
       />
 
       {/* Featured section */}
-      {/* {featured && (
-        <div className="rounded-xl p-4 shadow-lg">
-          <h2 className="text-2xl font-bold">{featured.name}</h2>
-          <p className="text-sm opacity-70">{getReleaseMessage(featured.release_date)}</p>
+      {featured && (
+        <div className="flex flex-col items-center w-full">
+          <div className="text-2xl font-semibold italic">Next release</div>
+          <div className="w-full p-5 rounded-xl shadow-lg bg-white flex flex-row gap-3 justify-between items-center">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row items-center justify-between w-full">
+                <div className="flex flex-col">
+                  <h2 className="text-lg font-bold">{featured.name}</h2>
+                  <div className="flex flex-row gap-1 text-sm text-slate-500">
+                    <div>By</div>
+                    {featured.developers.map((dev, index) => (
+                      <div key={`featured-${dev.name}`} className="font-semibold">
+                        {dev.name}
+                        {index < featured.developers.length - 2
+                          ? ", "
+                          : index === featured.developers.length - 2
+                            ? " & "
+                            : ""}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    const element = document.getElementById(`game-${featured.id}`);
+                    if (element) {
+                      element.scrollIntoView({ behavior: "smooth", block: "center" });
+                      setFeaturedOpen(featured.id);
+                    }
+                  }}
+                  className="self-start mt-2 bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition hidden sm:block"
+                >
+                  View Game
+                </button>
+                <button
+                  onClick={() => {
+                    const element = document.getElementById(`gamecard-${featured.id}`);
+                    if (element) {
+                      element.scrollIntoView({ behavior: "smooth", block: "center" });
+                      setFeaturedOpen(featured.id);
+                    }
+                  }}
+                  className="self-start mt-2 bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition block sm:hidden"
+                >
+                  View Game
+                </button>
+              </div>
+            </div>
+            <span
+              className={`px-3 py-1 rounded-full font-semibold ${getReleaseMessage(featured.release_date) === "Releases today !"
+                  ? "bg-green-200 text-green-700"
+                  : "bg-amber-200 text-amber-700"
+                }`}
+            >
+              {getReleaseMessage(featured.release_date)}
+            </span>
+          </div>
         </div>
-      )} */}
+      )}
 
       <div className="flex flex-row justify-between min-w-full -mb-4 sm:px-7">
         <div>
@@ -81,14 +180,18 @@ const GameTable = ({ games }) => {
         </div>
         <div className="flex flex-row items-center gap-2">
           <button
-            className="size-6 p-1 bg-green-500 text-white rounded-md hover:scale-110 transition"
+            ref={openButtonRef}
+            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
+            onClick={() => setIsModalOpen(true)}
           >
-            <FaPlus />
+            <FaPlus className="block sm:hidden" />
+            <div className="hidden sm:block">Add new game</div>
           </button>
           <button
-            className="size-6 p-1 bg-amber-400 text-white rounded-md hover:scale-110 transition"
+            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition"
           >
-            <AiFillEdit />
+            <AiFillEdit className="block sm:hidden" />
+            <div className="hidden sm:block">Edit games</div>
           </button>
         </div>
       </div>
@@ -115,7 +218,11 @@ const GameTable = ({ games }) => {
             </thead>
             <tbody>
               {filtered.map(game => (
-                <GameRow key={game.id} game={game} edit={edit} />
+                <GameRow
+                  key={game.id}
+                  game={game}
+                  edit={edit}
+                />
               ))}
             </tbody>
           </table>
@@ -126,14 +233,49 @@ const GameTable = ({ games }) => {
       <div className="overflow-y-auto min-w-full sm:hidden pb-8 -mt-8">
         <div className="flex flex-col gap-5">
           {filtered.map(game => (
-            <GameCard key={game.id} game={game} edit={edit} opened={opened} />
+            <GameCard
+              key={game.id}
+              game={game}
+              edit={edit}
+              opened={opened}
+              forceOpen={featuredOpen === game.id}
+              setForceOpen={() => setFeaturedOpen(null)}
+            />
           ))}
         </div>
       </div>
+
+      {/* Back to top button */}
+      <BackToTopButton />
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div
+            ref={modalRef}
+            className="bg-white p-6 rounded-lg w-full max-w-2xl relative max-h-[75%] overflow-auto transition"
+          >
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-lg hover:scale-110 rotate-45 transition"
+            >
+              <FaPlus />
+            </button>
+            {isLogged ? (
+              <AddGameForm onClose={handleCloseModal} />
+            ) : (
+              <Login
+                onSuccess={() => {
+                  localStorage.setItem("admin", "true");
+                  setIsLogged(true);
+                }}
+                onClose={handleCloseModal}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
-  
-  
 };
 
 export default GameTable;

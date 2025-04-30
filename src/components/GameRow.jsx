@@ -48,7 +48,7 @@ const GameRow = ({ game, edit }) => {
   };
 
   return (
-    <tr className="text-center relative text-sm">
+    <tr id={`game-${game.id}`} className="text-center relative text-sm">
       {edit ? (
         <td className="p-3 sticky left-0 bg-white z-20">
           <div className="flex flex-col gap-2">
@@ -83,7 +83,7 @@ const GameRow = ({ game, edit }) => {
               Coming soon
             </div>
           )}
-          <a href={game.link}>
+          <a target="blank" href={game.link}>
             <div className="hover:scale-110 transition text-base">{game.name}</div>
           </a>
         </td>
@@ -130,7 +130,7 @@ const GameRow = ({ game, edit }) => {
         <td className="p-3">
           <div className="flex flex-col divide-y">
             {game.developers.map((developer, index) => (
-              <a href={developer.link} key={index} className={game.developers.length > 1 ? "py-1.5" : ""}>
+              <a target="blank" href={developer.link} key={developer.name} className={game.developers.length > 1 ? "py-1.5" : ""}>
                 <div className="hover:scale-110 transition text-sm">{developer.name}</div>
               </a>
             ))}
@@ -140,7 +140,7 @@ const GameRow = ({ game, edit }) => {
       {edit ? (
         <td className="p-3">
           {game.editors.map((edi, index) => (
-            <div key={index} className="flex flex-col gap-2 justify-center">
+            <div key={edi.name} className="flex flex-col gap-2 justify-center">
               <input
                 type="text"
                 className="px-4 py-2 rounded border"
@@ -159,7 +159,7 @@ const GameRow = ({ game, edit }) => {
         <td className="p-3">
           <div className="flex flex-col divide-y">
             {game.editors.map((editor, index) => (
-              <a href={editor.link} key={index} className={game.editors.length > 1 ? "py-1.5" : ""}>
+              <a target="blank" href={editor.link} key={index} className={game.editors.length > 1 ? "py-1.5" : ""}>
                 <div className="hover:scale-110 transition text-sm">{editor.name}</div>
               </a>
             ))}
@@ -229,7 +229,7 @@ const GameRow = ({ game, edit }) => {
               ))}
             </div>
             {game.ratings.link ? (
-              <a href={game.ratings.link}>
+              <a target="blank" href={game.ratings.link}>
                 <div className="text-xs text-slate-500 hover:scale-110 transition"><span className="font-normal">Details on</span> <span className="font-bold">OpenCritic</span></div>
               </a>
             ) : (

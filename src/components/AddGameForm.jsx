@@ -102,7 +102,7 @@ const AddGameForm = () => {
   };
 
   return (
-    <div className="bg-muted p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
+    <div className="px-8 py-5">
       <h2 className="text-2xl font-bold mb-4">Add a new game</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Info */}
@@ -144,26 +144,7 @@ const AddGameForm = () => {
           </div>
         </div>
 
-        <div>
-          {/* Platform toggle buttons */}
-          <label className="block text-sm mb-2">Platforms</label>
-          <div className="flex flex-wrap gap-2">
-            {platformOptions.map((platform) => (
-              <button
-                type="button"
-                key={platform}
-                onClick={() => handlePlatformToggle(platform)}
-                className={`px-3 py-1 rounded-full border text-sm ${
-                  form.platforms[platform] ? "bg-blue-500 text-white" : ""
-                }`}
-              >
-                {platformLabels[platform]}
-              </button>
-            ))}
-          </div>
-          {errors.platforms && <span className="text-red-500 text-sm">{errors.platforms}</span>}
-        </div>
-
+        {/* Developers */}
         <div>
           <label className="block text-sm mb-2">Developers</label>
           {form.developers.map((dev, i) => (
@@ -182,8 +163,11 @@ const AddGameForm = () => {
               />
               <button
                 type="button"
-                onClick={() => removeEntry("developers", i)}
                 className="text-sm hover:scale-105 transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeEntry("developers", i)
+                }}
               >Remove</button>
             </div>
           ))}
@@ -218,8 +202,11 @@ const AddGameForm = () => {
               />
               <button
                 type="button"
-                onClick={() => removeEntry("editors", i)}
                 className="text-sm hover:scale-105 transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeEntry("editors", i)
+                }}
               >Remove</button>
             </div>
           ))}
@@ -233,6 +220,26 @@ const AddGameForm = () => {
             </button>
             {errors.editors && <span className="text-red-500 text-sm">{errors.editors}</span>}
           </div>
+        </div>
+
+        {/* Platforms */}
+        <div>
+          <label className="block text-sm mb-2">Platforms</label>
+          <div className="flex flex-wrap gap-2">
+            {platformOptions.map((platform) => (
+              <button
+                type="button"
+                key={platform}
+                onClick={() => handlePlatformToggle(platform)}
+                className={`px-3 py-1 rounded-full border text-sm hover:bg-blue-100 transition ${
+                  form.platforms[platform] ? "bg-blue-500 text-white hover:bg-blue-400" : ""
+                }`}
+              >
+                {platformLabels[platform]}
+              </button>
+            ))}
+          </div>
+          {errors.platforms && <span className="text-red-500 text-sm">{errors.platforms}</span>}
         </div>
 
         {/* Ratings */}
