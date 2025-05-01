@@ -16,6 +16,18 @@ const GameTable = ({ games }) => {
   const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
   const openButtonRef = useRef(null); 
  
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    }
+  }, [isModalOpen]);
+
   const filtered = games
     .filter(game =>
       game.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -179,19 +191,28 @@ const GameTable = ({ games }) => {
           </button>
         </div>
         <div className="flex flex-row items-center gap-2">
+          {!edit && (
+            <button
+              ref={openButtonRef}
+              className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <FaPlus className="block sm:hidden" />
+              <div className="hidden sm:block">Add new game</div>
+            </button>
+          )}
           <button
-            ref={openButtonRef}
-            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
-            onClick={() => setIsModalOpen(true)}
+            className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
+            onClick={() => setEdit(prev => !prev)}
           >
-            <FaPlus className="block sm:hidden" />
-            <div className="hidden sm:block">Add new game</div>
-          </button>
-          <button
-            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition"
-          >
-            <AiFillEdit className="block sm:hidden" />
-            <div className="hidden sm:block">Edit games</div>
+            {edit ? (
+              <FaPlus className="rotate-45" />
+            ) : (
+              <AiFillEdit className="block sm:hidden " />
+            )}
+            <div className="hidden sm:block">
+              {edit ? "Quit edition" : "Edit games"}
+            </div>
           </button>
         </div>
       </div>
@@ -261,7 +282,11 @@ const GameTable = ({ games }) => {
               <FaPlus />
             </button>
             {isLogged ? (
-              <AddGameForm onClose={handleCloseModal} />
+              <AddGameForm
+                games={games}
+                onClose={handleCloseModal}
+                onSuccess={handleCloseModal}
+              />
             ) : (
               <Login
                 onSuccess={() => {

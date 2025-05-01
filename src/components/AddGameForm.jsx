@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { addGameToFirestore } from "../firebase/firebase";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import SuggestionDropdown from "./SuggestionDropdown";
 
 const platformOptions = ["pc", "ps", "xbox", "switch", "switch_2"];
 const platformLabels = {
@@ -12,18 +15,41 @@ const platformLabels = {
   switch_2: "Nintendo Switch 2",
 };
 
-const AddGameForm = () => {
-  const [form, setForm] = useState({
+const AddGameForm = ({ games, onSuccess }) => {
+  const getInitialFormState = () => ({
     name: "",
     link: "",
     releaseDate: "",
-    developers: [{}],
-    editors: [{}],
+    developers: [{ name: "", link: "" }],
+    editors: [{ name: "", link: "" }],
     platforms: platformOptions.reduce((acc, platform) => ({ ...acc, [platform]: false }), {}),
     ratings: { critics: 0, players: 0, link: "" },
   });
+  const [form, setForm] = useState(getInitialFormState());
   const [errors, setErrors] = useState({});
+  const [addNew, setAddNew] = useState(false);
+  const [existingDevs, setExistingDevs] = useState([]);
+  const [existingEditors, setExistingEditors] = useState([]);
+  const [suggestionTarget, setSuggestionTarget] = useState(null);
+  const [releaseTba, setReleaseTba] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = () => {
+      const devSet = new Map();
+      const editorSet = new Map();
+
+      games.forEach(game => {
+        game.developers.forEach(dev => dev.name && devSet.set(dev.name, dev.link));
+        game.editors.forEach(editor => editor.name && editorSet.set(editor.name, editor.link));
+      })
+
+      setExistingDevs(Array.from(devSet.entries()).map(([name, link]) => ({ name, link })));
+      setExistingEditors(Array.from(editorSet.entries()).map(([name, link]) => ({ name, link })));
+    };
+
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,14 +121,22 @@ const AddGameForm = () => {
         ratings: form.ratings,
       });
 
-      navigate("/");
+      toast.success("Game added successfully!");
+
+      if (!addNew) {
+        if (onSuccess) onSuccess();
+        navigate("/");
+      }
+
+      setForm(getInitialFormState());
+      setAddNew(false);
     } catch (err) {
       console.error("Failed to add game:", err);
     }
   };
 
   return (
-    <div className="px-8 py-5">
+    <div className="sm:px-8 py-5">
       <h2 className="text-2xl font-bold mb-4">Add a new game</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Info */}
@@ -133,6 +167,7 @@ const AddGameForm = () => {
 
           <div className="flex flex-col">
             <label className="block text-sm mb-2">Release date</label>
+            
             <input
               type="date"
               name="releaseDate"
@@ -149,18 +184,38 @@ const AddGameForm = () => {
           <label className="block text-sm mb-2">Developers</label>
           {form.developers.map((dev, i) => (
             <div key={i} className="flex flex-row gap-2 mb-2 items-center">
-              <input
-                placeholder="Name"
-                className="px-3 py-1 rounded border w-full"
-                value={dev.name}
-                onChange={(e) => updateEntry("developers", i, "name", e.target.value)}
-              />
+              <div className="relative w-full">
+                <input
+                  placeholder="Name"
+                  className="px-3 py-1 rounded border w-full"
+                  value={dev.name}
+                  onFocus={() => {
+                    if (!dev.name) setSuggestionTarget({ type: "developers", index: i, field: "name" });
+                  }}
+                  onChange={(e) => updateEntry("developers", i, "name", e.target.value)}
+                />
+                {suggestionTarget?.type === "developers" &&
+                  suggestionTarget?.index === i &&
+                  suggestionTarget?.field === "name" && (
+                    <SuggestionDropdown
+                      suggestions={existingDevs}
+                      value={dev.name}
+                      onSelect={(selected) => {
+                        updateEntry("developers", i, "name", selected.name);
+                        updateEntry("developers", i, "link", selected.link);
+                        setSuggestionTarget(null);
+                      }}
+                    />
+                  )}
+              </div>
+
               <input
                 placeholder="Link"
                 className="px-3 py-1 rounded border w-full"
                 value={dev.link}
                 onChange={(e) => updateEntry("developers", i, "link", e.target.value)}
               />
+
               <button
                 type="button"
                 className="text-sm hover:scale-105 transition"
@@ -188,12 +243,30 @@ const AddGameForm = () => {
           <label className="block text-sm mb-2">Editors</label>
           {form.editors.map((ed, i) => (
             <div key={i} className="flex flex-row gap-2 mb-2 items-center">
-              <input
-                placeholder="Name"
-                className="px-3 py-1 rounded border w-full"
-                value={ed.name}
-                onChange={(e) => updateEntry("editors", i, "name", e.target.value)}
-              />
+              <div className="relative w-full">
+                <input
+                  placeholder="Name"
+                  className="px-3 py-1 rounded border w-full"
+                  value={ed.name}
+                  onFocus={() => {
+                    if (!ed.name) setSuggestionTarget({ type: "editors", index: i, field: "name" });
+                  }}
+                  onChange={(e) => updateEntry("editors", i, "name", e.target.value)}
+                />
+                {suggestionTarget?.type === "editors" &&
+                  suggestionTarget?.index === i &&
+                  suggestionTarget?.field === "name" && (
+                    <SuggestionDropdown
+                      suggestions={existingEditors}
+                      value={ed.name}
+                      onSelect={(selected) => {
+                        updateEntry("editors", i, "name", selected.name);
+                        updateEntry("editors", i, "link", selected.link);
+                        setSuggestionTarget(null);
+                      }}
+                    />
+                  )}
+              </div>
               <input
                 placeholder="Link"
                 className="px-3 py-1 rounded border w-full"
@@ -288,13 +361,24 @@ const AddGameForm = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="rounded-md border px-6 py-2 bg-blue-500 text-white"
-        >
-          Add Game
-        </button>
+        <div className="flex flex-row gap-3">
+          <button
+            type="submit"
+            className="rounded-md border px-3 py-1.5 bg-blue-500 text-white"
+          >
+            Add and go back
+          </button>
+          <button
+            type="submit"
+            className="rounded-md border px-3 py-1.5 bg-blue-500 text-white"
+            onClick={() => setAddNew(true)}
+          >
+            Add and reset form
+          </button>
+        </div>
       </form>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
