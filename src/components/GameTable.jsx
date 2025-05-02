@@ -246,31 +246,41 @@ const GameTable = ({ games }) => {
             {opened ? "Collaspe all" : "Expand all"}
           </button>
         </div>
-        <div className="flex flex-row items-center gap-2">
-          {!edit && (
-            <button
-              ref={openButtonRef}
-              className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <FaPlus className="block sm:hidden" />
-              <div className="hidden sm:block">Add new game</div>
-            </button>
-          )}
-          <button
-            className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
-            onClick={() => setEdit(prev => !prev)}
-          >
-            {edit ? (
-              <FaPlus className="rotate-45 block sm:hidden" />
-            ) : (
-              <AiFillEdit className="block sm:hidden" />
+        {isLogged ? (
+          <div className="flex flex-row items-center gap-2">
+            {!edit && (
+              <button
+                ref={openButtonRef}
+                className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <FaPlus className="block sm:hidden" />
+                <div className="hidden sm:block">Add new game</div>
+              </button>
             )}
-            <div className="hidden sm:block">
-              {edit ? "Quit Edit Mode" : "Edit games"}
-            </div>
+            <button
+              className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
+              onClick={() => setEdit(prev => !prev)}
+            >
+              {edit ? (
+                <FaPlus className="rotate-45 block sm:hidden" />
+              ) : (
+                <AiFillEdit className="block sm:hidden" />
+              )}
+              <div className="hidden sm:block">
+                {edit ? "Quit Edit Mode" : "Edit games"}
+              </div>
+            </button>
+          </div>
+        ) : (
+          <button
+            ref={openButtonRef}
+            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <div className="hidden sm:block">I am an admin</div>
           </button>
-        </div>
+        )}
       </div>
 
       {/* Table */}
