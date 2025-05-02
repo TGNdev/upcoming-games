@@ -58,11 +58,15 @@ const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
       >
         <div className="flex flex-col gap-1">
           <span className="text-lg font-bold">{game.name}</span>
-          <span className="text-xs">{new Date(game.release_date.seconds * 1000).toLocaleDateString("en-EN", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}</span>
+          <span className="text-xs">
+            {game.release_date?.seconds
+              ? new Date(game.release_date.seconds * 1000).toLocaleDateString("en-EN", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
+              : game.release_date || "Unknown"}
+          </span>
         </div>
         <FiChevronDown
           className={`text-xl transform transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
@@ -122,7 +126,8 @@ const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
                     <FiChevronDown
                       className={`text-base text-black transform transition-transform duration-300 ${showEditors ? "rotate-180" : ""}`}
                     />
-                  </div>                </button>
+                  </div>
+                </button>
                 <div className={`transition-all duration-300 overflow-hidden ${showEditors ? "max-h-96 mt-2" : "max-h-0"}`}>
                   <div className="space-y-1 text-sm pt-2">
                     {game.editors.map((edit, idx) => (

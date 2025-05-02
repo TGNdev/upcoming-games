@@ -91,9 +91,6 @@ const AddGameForm = ({ games, onSuccess }) => {
     const errs = {};
     if (!form.name) errs.name = "Name is required";
     if (!form.link) errs.link = "Link is required";
-    if (!Object.values(form.platforms).some(Boolean)) {
-      errs.platforms = "Select at least one platform";
-    }
     if (form.developers.length === 0) errs.developers = "Enter at least one developer";
     if (form.developers.some(dev => !dev.name || !dev.link)) {
       errs.developers = "All developers must have a name and a link";
@@ -102,6 +99,7 @@ const AddGameForm = ({ games, onSuccess }) => {
     if (form.editors.some(ed => !ed.name || !ed.link)) {
       errs.editors = "All editors must have a name and a link";
     }
+    if (!form.releaseDate) errs.releaseDate = "Release date is required"
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -111,10 +109,16 @@ const AddGameForm = ({ games, onSuccess }) => {
     if (!validate()) return;
 
     try {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      const isValidDate = dateRegex.test(form.releaseDate) && !isNaN(Date.parse(form.releaseDate));
+      const releaseDate = isValidDate
+        ? Timestamp.fromDate(new Date(form.releaseDate))
+        : form.releaseDate;
+
       await addGameToFirestore({
         name: form.name,
         link: form.link,
-        release_date: Timestamp.fromDate(new Date(form.releaseDate)),
+        release_date: releaseDate,
         developers: form.developers,
         editors: form.editors,
         platforms: form.platforms,
@@ -167,14 +171,23 @@ const AddGameForm = ({ games, onSuccess }) => {
 
           <div className="flex flex-col">
             <label className="block text-sm mb-2">Release date</label>
-            
-            <input
-              type="date"
-              name="releaseDate"
-              className="px-4 py-2 rounded border"
-              value={form.releaseDate}
-              onChange={handleChange}
-            />
+            <div className="flex flex-row justify-between gap-4">
+              <input
+                type={`${releaseTba ? "text" : "date"}`}
+                placeholder={`${releaseTba && "'TBA 2026' or 'Q4 2025'"}`}
+                name="releaseDate"
+                className="px-4 py-2 rounded border w-full"
+                value={form.releaseDate}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="px-3 py-1.5 min-w-fit bg-blue-500 rounded-md text-white"
+                onClick={() => setReleaseTba(prev => !prev)}
+              >
+                TBA
+              </button>
+            </div>
             {errors.releaseDate && <span className="text-red-500 text-sm">{errors.releaseDate}</span>}
           </div>
         </div>

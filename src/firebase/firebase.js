@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, deleteDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -19,11 +19,23 @@ const db = initializeFirestore(app, {
 
 export const addGameToFirestore = async (gameData) => {
     try {
-        const docRef = await addDoc(collection(db, "games"), gameData);
-        console.log("Document written with ID: ", docRef.id);
+        await addDoc(collection(db, "games"), gameData);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
+}
+
+export const deleteGameFromFirestore = async (gameId) => {
+    try {
+        const gameRef = doc(db, "games", gameId);
+        await deleteDoc(gameRef);
+    } catch (e) {
+        console.error("Error deleting document: ", e);
+    }
+};
+
+export const editGame = async (gameId, gameData) => {
+    //
 }
 
 export { db };

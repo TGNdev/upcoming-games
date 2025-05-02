@@ -11,12 +11,12 @@ const Login = ({ onSuccess, onClose }) => {
       localStorage.setItem("admin", "true");
       onSuccess();
     } else {
-      setError("Nah nah nah, you are not an admin bro.")
+      setError("Nah, you're not an admin bro.")
     }
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-4">
+    <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-6">
       <input
         type="password"
         value={password}
@@ -28,9 +28,9 @@ const Login = ({ onSuccess, onClose }) => {
       <div className="flex justify-between items-center">
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:scale-105 transition"
+          className="bg-blue-500 text-white py-1.5 px-3 rounded hover:scale-105 transition"
         >
-          Login
+          I am an admin
         </button>
         <button onClick={onClose} type="button" className="text-sm text-gray-500 hover:underline">
           Cancel

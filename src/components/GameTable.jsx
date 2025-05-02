@@ -6,6 +6,7 @@ import Login from "./Login";
 import BackToTopButton from "./BackTopButton";
 import { FaPlus } from "react-icons/fa";
 import { AiFillEdit } from "react-icons/ai";
+import { Timestamp } from "firebase/firestore";
 
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
@@ -14,7 +15,8 @@ const GameTable = ({ games }) => {
   const [featuredOpen, setFeaturedOpen] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
-  const openButtonRef = useRef(null); 
+  const [withRelease, setWithRelease] = useState(true);
+  const openButtonRef = useRef(null);
  
   useEffect(() => {
     if (isModalOpen) {
@@ -28,18 +30,53 @@ const GameTable = ({ games }) => {
     }
   }, [isModalOpen]);
 
+  const quarterWeight = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
+  const getSortValue = (release_date) => {
+    if (release_date instanceof Timestamp) {
+      return new Date(release_date.seconds * 1000).getTime();
+    }
+
+    if (typeof release_date === "string") {
+      const quarterMatch = release_date.match(/Q([1-4]) (\d{4})/);
+      const tbaMatch = release_date.match(/TBA (\d{4})/);
+
+      if (quarterMatch) {
+        const [_, q, year] = quarterMatch;
+        return parseInt(year) * 100 + quarterWeight[`Q${q}`];
+      }
+
+      if (tbaMatch) {
+        const [_, year] = tbaMatch;
+        return parseInt(year) * 100 + 99;
+      }
+
+      if (release_date === "TBA") {
+        return Infinity;
+      }
+    }
+
+    return Infinity;
+  };
+
   const filtered = games
+    .filter(game => {
+      if (withRelease) {
+        return game.release_date instanceof Timestamp;
+      } else {
+        return typeof game.release_date === "string";
+      }
+    })
     .filter(game =>
       game.name.toLowerCase().includes(search.toLowerCase()) ||
       game.developers.some(dev => dev.name.toLowerCase().includes(search.toLowerCase())) ||
       game.editors.some(editor => editor.name.toLowerCase().includes(search.toLowerCase()))
     )
     .sort((a, b) => {
-      const dateA = new Date(a.release_date.seconds * 1000);
-      const dateB = new Date(b.release_date.seconds * 1000);
+      const aSort = getSortValue(a.release_date);
+      const bSort = getSortValue(b.release_date);
 
-      if (dateA - dateB !== 0) {
-        return dateA - dateB;
+      if (aSort !== bSort) {
+        return aSort - bSort;
       }
 
       return a.name.localeCompare(b.name);
@@ -180,7 +217,26 @@ const GameTable = ({ games }) => {
         </div>
       )}
 
-      <div className="flex flex-row justify-between min-w-full -mb-4 sm:px-7">
+      <div className="w-full flex justify-center">
+        <div className="flex flex-row w-full gap-4 items-center justify-center">
+          <button
+            className={`${withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-3 py-2 border rounded-md transition`}
+            onClick={() => setWithRelease(true)}
+            disabled={withRelease}
+          >
+            With release dates
+          </button>
+          <button
+            className={`${!withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-3 py-2 border rounded-md transition`}
+            onClick={() => setWithRelease(false)}
+            disabled={!withRelease}
+          >
+            Without release dates
+          </button>
+        </div>
+      </div>
+
+      <div className="sticky top-[64px] bg-white z-40 flex flex-row justify-between min-w-full -mb-4 sm:px-7">
         <div>
           <button
             type="button"
@@ -206,12 +262,12 @@ const GameTable = ({ games }) => {
             onClick={() => setEdit(prev => !prev)}
           >
             {edit ? (
-              <FaPlus className="rotate-45" />
+              <FaPlus className="rotate-45 block sm:hidden" />
             ) : (
-              <AiFillEdit className="block sm:hidden " />
+              <AiFillEdit className="block sm:hidden" />
             )}
             <div className="hidden sm:block">
-              {edit ? "Quit edition" : "Edit games"}
+              {edit ? "Quit Edit Mode" : "Edit games"}
             </div>
           </button>
         </div>
@@ -235,6 +291,9 @@ const GameTable = ({ games }) => {
                     <div className="text-xs opacity-50">Players</div>
                   </div>
                 </th>
+                {edit && (
+                  <th className="p-3 sticky right-0 bg-white z-10">Edit actions</th>
+                )}
               </tr>
             </thead>
             <tbody>

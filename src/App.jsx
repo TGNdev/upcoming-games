@@ -14,7 +14,7 @@ const App = () => {
           </Link>
         </nav>
       </div>
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
