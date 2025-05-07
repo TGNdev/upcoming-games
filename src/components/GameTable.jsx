@@ -4,9 +4,12 @@ import GameCard from "./GameCard";
 import AddGameForm from "./AddGameForm";
 import Login from "./Login";
 import BackToTopButton from "./BackTopButton";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter } from "react-icons/fa";
 import { AiFillEdit } from "react-icons/ai";
 import { Timestamp } from "firebase/firestore";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 const GameTable = ({ games }) => {
   const [search, setSearch] = useState("");
@@ -17,6 +20,7 @@ const GameTable = ({ games }) => {
   const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
   const [withRelease, setWithRelease] = useState(true);
   const openButtonRef = useRef(null);
+  const [openFilters, setOpenFilters] = useState(false);
  
   useEffect(() => {
     if (isModalOpen) {
@@ -144,22 +148,78 @@ const GameTable = ({ games }) => {
   const modalRef = useOutsideClick(handleCloseModal, [openButtonRef]);
 
   return (
-    <div className="flex flex-col items-end p-6 max-w-full overflow-x-auto gap-10">
-      {/* Search bar */}
-      <input
-        className="px-3 py-1 rounded border w-full sm:w-2/3 lg:w-2/5"
-        type="text"
-        placeholder="Search games..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
+    <div className="flex flex-col items-end px-6 pb-6 max-w-full gap-10">
+      <div className="sticky top-0 bg-white z-50 flex flex-col w-full gap-6 py-4">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
+          <Link to="/">
+            <h1 className="text-xl font-bold">{process.env.REACT_APP_TITLE}</h1>
+          </Link>
+
+          {/* Search bar */}
+          <input
+            className="px-3 py-1 rounded border w-full sm:w-2/3 lg:w-2/5"
+            type="text"
+            placeholder="Search games..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-row justify-between min-w-full sm:px-7">
+          <div>
+            <button
+              type="button"
+              className={`${opened ? "animate-pulse bg-amber-400" : "bg-blue-500"} text-sm hover:scale-110 transition text-white px-2 py-1 rounded-md sm:hidden`}
+              onClick={() => setOpened(prev => !prev)}
+            >
+              {opened ? "Collaspe all" : "Expand all"}
+            </button>
+          </div>
+          {isLogged ? (
+            <div className="flex flex-row items-center gap-2">
+              {!edit && (
+                <button
+                  ref={openButtonRef}
+                  className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <FaPlus className="block sm:hidden" />
+                  <div className="hidden sm:block">Add new game</div>
+                </button>
+              )}
+              <button
+                className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
+                onClick={() => setEdit(prev => !prev)}
+              >
+                {edit ? (
+                  <FaPlus className="rotate-45 block sm:hidden" />
+                ) : (
+                  <AiFillEdit className="block sm:hidden" />
+                )}
+                <div className="hidden sm:block">
+                  {edit ? "Quit Edit Mode" : "Edit games"}
+                </div>
+              </button>
+            </div>
+          ) : (
+            <button
+              ref={openButtonRef}
+              className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <div className="hidden sm:block">I am an admin</div>
+            </button>
+          )}
+        </div>
+      </div>
+
 
       {/* Featured section */}
       {featured && (
-        <div className="flex flex-col items-center w-full">
-          <div className="text-2xl font-semibold italic">Next release</div>
-          <div className="w-full p-5 rounded-xl shadow-lg bg-white flex flex-row gap-3 justify-between items-center">
-            <div className="flex flex-col gap-3">
+        <div className="flex flex-col items-center w-full border rounded-xl">
+          <div className="text-2xl font-semibold italic mt-2">Next release</div>
+          <div className="w-full p-5 flex flex-col gap-3 justify-between">
+            <div className="flex flex-col gap-4">
               <div className="flex flex-row items-center justify-between w-full">
                 <div className="flex flex-col">
                   <h2 className="text-lg font-bold">{featured.name}</h2>
@@ -178,7 +238,7 @@ const GameTable = ({ games }) => {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="flex flex-row items-center justify-between">
                 <button
                   onClick={() => {
                     const element = document.getElementById(`game-${featured.id}`);
@@ -187,7 +247,7 @@ const GameTable = ({ games }) => {
                       setFeaturedOpen(featured.id);
                     }
                   }}
-                  className="self-start mt-2 bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition hidden sm:block"
+                  className="self-start bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition hidden sm:block"
                 >
                   View Game
                 </button>
@@ -199,20 +259,20 @@ const GameTable = ({ games }) => {
                       setFeaturedOpen(featured.id);
                     }
                   }}
-                  className="self-start mt-2 bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition block sm:hidden"
+                  className="self-start bg-blue-500 text-white text-sm px-3 py-1.5 rounded-md hover:scale-105 transition block sm:hidden"
                 >
                   View Game
                 </button>
+                <span
+                  className={`px-2 py-1 sm:px-4 text-sm sm:text-base rounded-full font-semibold text-center ${getReleaseMessage(featured.release_date) === "Releases today !"
+                      ? "bg-green-200 text-green-700"
+                      : "bg-amber-200 text-amber-700"
+                    }`}
+                >
+                  {getReleaseMessage(featured.release_date)}
+                </span>
               </div>
             </div>
-            <span
-              className={`px-3 py-1 rounded-full font-semibold ${getReleaseMessage(featured.release_date) === "Releases today !"
-                  ? "bg-green-200 text-green-700"
-                  : "bg-amber-200 text-amber-700"
-                }`}
-            >
-              {getReleaseMessage(featured.release_date)}
-            </span>
           </div>
         </div>
       )}
@@ -220,68 +280,39 @@ const GameTable = ({ games }) => {
       <div className="w-full flex justify-center">
         <div className="flex flex-row w-full gap-4 items-center justify-center">
           <button
-            className={`${withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-3 py-2 border rounded-md transition`}
+            className={`${withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
             onClick={() => setWithRelease(true)}
             disabled={withRelease}
           >
-            With release dates
+            With release date
           </button>
           <button
-            className={`${!withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-3 py-2 border rounded-md transition`}
+            className={`${!withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
             onClick={() => setWithRelease(false)}
             disabled={!withRelease}
           >
-            Without release dates
+            Without release date
           </button>
         </div>
       </div>
 
-      <div className="sticky top-[64px] bg-white z-40 flex flex-row justify-between min-w-full -mb-4 sm:px-7">
-        <div>
-          <button
-            type="button"
-            className={`${opened ? "animate-pulse bg-amber-400" : "bg-blue-500"} text-sm hover:scale-110 transition text-white px-2 py-1 rounded-md sm:hidden`}
-            onClick={() => setOpened(prev => !prev)}
-          >
-            {opened ? "Collaspe all" : "Expand all"}
-          </button>
-        </div>
-        {isLogged ? (
-          <div className="flex flex-row items-center gap-2">
-            {!edit && (
-              <button
-                ref={openButtonRef}
-                className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <FaPlus className="block sm:hidden" />
-                <div className="hidden sm:block">Add new game</div>
-              </button>
-            )}
+      {/* <div className="flex flex-col gap-2 px-7">
+        <button
+          className="px-2 py-1.5 rounded-md border hover:bg-slate-200 transition"
+          onClick={() => setOpenFilters(prev => !prev)}
+        >
+          <FaFilter />
+        </button>
+        {openFilters && (
+          <div className="flex flex-row gap-3">
             <button
-              className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
-              onClick={() => setEdit(prev => !prev)}
+              className="text-sm rounded-full border hover:bg-blue-300 hover:text-white transition p-1"
             >
-              {edit ? (
-                <FaPlus className="rotate-45 block sm:hidden" />
-              ) : (
-                <AiFillEdit className="block sm:hidden" />
-              )}
-              <div className="hidden sm:block">
-                {edit ? "Quit Edit Mode" : "Edit games"}
-              </div>
+              Released
             </button>
           </div>
-        ) : (
-          <button
-            ref={openButtonRef}
-            className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <div className="hidden sm:block">I am an admin</div>
-          </button>
         )}
-      </div>
+      </div> */}
 
       {/* Table */}
       <div className="flex flex-col max-w-full overflow-x-auto">
@@ -368,6 +399,8 @@ const GameTable = ({ games }) => {
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

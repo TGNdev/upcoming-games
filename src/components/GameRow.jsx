@@ -7,6 +7,8 @@ import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { AiFillEdit } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
 import { deleteGameFromFirestore } from "../firebase/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const getRatingStyle = (rating) => {
   const baseClasses = "size-5 px-5 py-4 rounded-xl text-white hover:cursor-default text-sm flex items-center justify-center";
@@ -292,7 +294,7 @@ const GameRow = ({ game, edit }) => {
             {game.ratings.link ? (
               <a target="blank" href={game.ratings.link}>
                 <div className="text-xs text-slate-500 hover:scale-110 transition">
-                  <span className="font-normal">Details on</span>{" "}
+                  <span className="font-normal">Details on </span>
                   <span className="font-bold">OpenCritic</span>
                 </div>
               </a>
@@ -318,6 +320,8 @@ const GameRow = ({ game, edit }) => {
               onClick={() => {
                 if (window.confirm(`Are you sure you want to delete "${game.name}" ?`)) {
                   deleteGameFromFirestore(game.id);
+
+                  toast.success("Game added successfully!");
                 }
               }}
             >

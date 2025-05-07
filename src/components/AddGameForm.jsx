@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { addGameToFirestore } from "../firebase/firebase";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -390,8 +389,6 @@ const AddGameForm = ({ games, onSuccess }) => {
           </button>
         </div>
       </form>
-
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
