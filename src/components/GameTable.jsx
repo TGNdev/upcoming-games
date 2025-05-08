@@ -190,7 +190,13 @@ const GameTable = ({ games }) => {
               )}
               <button
                 className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
-                onClick={() => setEdit(prev => !prev)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEdit(prev => !prev)
+                  if (!opened && !edit) {
+                    setOpened(true);
+                  }
+                }}
               >
                 {edit ? (
                   <FaPlus className="rotate-45 block sm:hidden" />
@@ -205,15 +211,14 @@ const GameTable = ({ games }) => {
           ) : (
             <button
               ref={openButtonRef}
-              className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
+              className="text-sm sm:w-fit sm:py-2 px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
               onClick={() => setIsModalOpen(true)}
             >
-              <div className="hidden sm:block">I am an admin</div>
+              <div className="">I am an admin</div>
             </button>
           )}
         </div>
       </div>
-
 
       {/* Featured section */}
       {featured && (
@@ -346,6 +351,8 @@ const GameTable = ({ games }) => {
               opened={opened}
               forceOpen={featuredOpen === game.id}
               setForceOpen={() => setFeaturedOpen(null)}
+              setGameToEdit={setGameToEdit}
+              setIsModalOpen={setIsModalOpen}
             />
           ))}
         </div>

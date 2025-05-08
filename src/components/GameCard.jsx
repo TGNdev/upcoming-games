@@ -6,6 +6,7 @@ import { ReactComponent as SwitchIcon } from "../assets/icons/switch.svg";
 import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { FiChevronDown } from "react-icons/fi";
 import { FaThumbsUp } from "react-icons/fa6";
+import { AiFillEdit } from "react-icons/ai";
 
 const getPlatformsSvg = (platform) => {
   const base = "size-8 rounded p-1.5";
@@ -25,7 +26,7 @@ const getPlatformsSvg = (platform) => {
   }
 };
 
-const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
+const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen, setGameToEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showDevs, setShowDevs] = useState(false);
   const [showEditors, setShowEditors] = useState(false);
@@ -172,6 +173,19 @@ const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
                   </button>
                 )}
               </div>
+
+              {edit && (
+                <button
+                  className="bg-amber-400 text-white rounded-md w-fit text-sm px-2 py-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsModalOpen(true);
+                    setGameToEdit(game)
+                  }}
+                >
+                  Edit game
+                </button>
+              )}
             </div>
 
             {/* Ratings */}
@@ -208,7 +222,6 @@ const GameCard = ({ game, opened, forceOpen, setForceOpen }) => {
                 <div className="text-center text-xs text-slate-500">Edit to add link</div>
               )}
             </div>
-
           </div>
         </div>
       </div>
