@@ -7,7 +7,7 @@ import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { AiFillEdit } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
 import { deleteGameFromFirestore } from "../firebase/firebase";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const getRatingStyle = (rating) => {
@@ -44,7 +44,7 @@ const getPlatformsSvg = (platform) => {
   }
 };
 
-const GameRow = ({ game, edit }) => {
+const GameRow = ({ game, edit, setGameToEdit, setIsModalOpen }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [useDateObject, setUseDateObject] = useState(typeof game.release_date === "object");
   const [editedGame, setEditedGame] = useState(JSON.parse(JSON.stringify(game)));
@@ -303,14 +303,17 @@ const GameRow = ({ game, edit }) => {
             )}
           </div>
         )}
-
       </td>
 
       {edit && (
         <td className="p-3 sticky right-0 bg-white z-20">
           <div className="flex flex-row gap-3 justify-center items-center">
             <button
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(true);
+                setGameToEdit(game);
+              }}
               className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition"
             >
               <AiFillEdit />
@@ -320,8 +323,6 @@ const GameRow = ({ game, edit }) => {
               onClick={() => {
                 if (window.confirm(`Are you sure you want to delete "${game.name}" ?`)) {
                   deleteGameFromFirestore(game.id);
-
-                  toast.success("Game added successfully!");
                 }
               }}
             >

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -34,8 +34,13 @@ export const deleteGameFromFirestore = async (gameId) => {
     }
 };
 
-export const editGame = async (gameId, gameData) => {
-    //
+export const editGameFromFirestore = async (gameId, gameData) => {
+    try {
+        const gameRef = doc(db, "games", gameId);
+        await updateDoc(gameRef, { ...gameData });
+    } catch (e) {
+        console.error("Error editing document: ", e);
+    }
 }
 
 export { db };

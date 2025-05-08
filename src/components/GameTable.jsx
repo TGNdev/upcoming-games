@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import GameRow from "./GameRow";
 import GameCard from "./GameCard";
 import AddGameForm from "./AddGameForm";
+import EditGameForm from "./EditGameForm";
 import Login from "./Login";
 import BackToTopButton from "./BackTopButton";
-import { FaPlus, FaFilter } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { AiFillEdit } from "react-icons/ai";
 import { Timestamp } from "firebase/firestore";
 import { ToastContainer } from "react-toastify";
@@ -19,8 +20,8 @@ const GameTable = ({ games }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
   const [withRelease, setWithRelease] = useState(true);
+  const [gameToEdit, setGameToEdit] = useState(null);
   const openButtonRef = useRef(null);
-  const [openFilters, setOpenFilters] = useState(false);
  
   useEffect(() => {
     if (isModalOpen) {
@@ -296,24 +297,6 @@ const GameTable = ({ games }) => {
         </div>
       </div>
 
-      {/* <div className="flex flex-col gap-2 px-7">
-        <button
-          className="px-2 py-1.5 rounded-md border hover:bg-slate-200 transition"
-          onClick={() => setOpenFilters(prev => !prev)}
-        >
-          <FaFilter />
-        </button>
-        {openFilters && (
-          <div className="flex flex-row gap-3">
-            <button
-              className="text-sm rounded-full border hover:bg-blue-300 hover:text-white transition p-1"
-            >
-              Released
-            </button>
-          </div>
-        )}
-      </div> */}
-
       {/* Table */}
       <div className="flex flex-col max-w-full overflow-x-auto">
         <div className="relative hidden sm:block">
@@ -343,6 +326,8 @@ const GameTable = ({ games }) => {
                   key={game.id}
                   game={game}
                   edit={edit}
+                  setGameToEdit={setGameToEdit}
+                  setIsModalOpen={setIsModalOpen}
                 />
               ))}
             </tbody>
@@ -382,11 +367,19 @@ const GameTable = ({ games }) => {
               <FaPlus />
             </button>
             {isLogged ? (
-              <AddGameForm
-                games={games}
-                onClose={handleCloseModal}
-                onSuccess={handleCloseModal}
-              />
+              edit ? (
+                <EditGameForm
+                  game={gameToEdit}
+                  games={games}
+                  onSuccess={handleCloseModal}
+                />
+              ) : (
+                <AddGameForm
+                  games={games}
+                  onClose={handleCloseModal}
+                  onSuccess={handleCloseModal}
+                />
+              )
             ) : (
               <Login
                 onSuccess={() => {
