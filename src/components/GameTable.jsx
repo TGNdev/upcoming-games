@@ -171,7 +171,10 @@ const GameTable = ({ games }) => {
             <button
               type="button"
               className={`${opened ? "animate-pulse bg-amber-400" : "bg-blue-500"} text-sm hover:scale-110 transition text-white px-2 py-1 rounded-md sm:hidden`}
-              onClick={() => setOpened(prev => !prev)}
+              onClick={() => {
+                setOpened(prev => !prev);
+                setFeaturedOpen(null);
+              }}
             >
               {opened ? "Collaspe all" : "Expand all"}
             </button>
