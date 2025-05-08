@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/game-track-2025/static/css/main.258ebb38.css",
-    "main.js": "/game-track-2025/static/js/main.cd335fab.js",
+    "main.js": "/game-track-2025/static/js/main.cef47220.js",
     "static/media/switch_2.svg": "/game-track-2025/static/media/switch_2.2e32cd1deec1bda9344ab3c12adb8d49.svg",
     "static/media/pc.svg": "/game-track-2025/static/media/pc.e681a3006a006ed4be9b4ac8dd0cffff.svg",
     "static/media/xbox.svg": "/game-track-2025/static/media/xbox.9c2dddcca458f78ff68232d5f6b2d147.svg",
@@ -9,10 +9,10 @@
     "static/media/switch.svg": "/game-track-2025/static/media/switch.8aa8e498a6c8f08c38bd30996f325e47.svg",
     "index.html": "/game-track-2025/index.html",
     "main.258ebb38.css.map": "/game-track-2025/static/css/main.258ebb38.css.map",
-    "main.cd335fab.js.map": "/game-track-2025/static/js/main.cd335fab.js.map"
+    "main.cef47220.js.map": "/game-track-2025/static/js/main.cef47220.js.map"
   },
   "entrypoints": [
     "static/css/main.258ebb38.css",
-    "static/js/main.cd335fab.js"
+    "static/js/main.cef47220.js"
   ]
 }
