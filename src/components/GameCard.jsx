@@ -110,7 +110,7 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
                 <div className={`transition-all overflow-auto ${showDevs ? "max-h-96 mt-2" : "max-h-0"}`}>
                   <div className="flex flex-col gap-1 text-sm pt-2">
                     {game.developers.map((dev, idx) => (
-                      <a href={dev.link} key={idx} className="hover:scale-105 transition">{dev.name}</a>
+                      <a target="blank" href={dev.link} key={idx} className="hover:scale-105 transition">{dev.name}</a>
                     ))}
                   </div>
                 </div>
@@ -132,7 +132,7 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
                 <div className={`transition-all duration-300 overflow-hidden ${showEditors ? "max-h-96 mt-2" : "max-h-0"}`}>
                   <div className="space-y-1 text-sm pt-2">
                     {game.editors.map((edit, idx) => (
-                      <a href={edit.link} key={idx} className="block hover:scale-105 transition">{edit.name}</a>
+                      <a target="blank" href={edit.link} key={idx} className="block hover:scale-105 transition">{edit.name}</a>
                     ))}
                   </div>
                 </div>
@@ -215,7 +215,7 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
                 );
               })}
               {game.ratings.link ? (
-                <a href={game.ratings.link} className="text-center">
+                <a target="blank" href={game.ratings.link} className="text-center">
                   <div className="text-xs text-slate-500 hover:scale-110 transition"><span className="font-normal">Details on</span> <span className="font-bold">OpenCritic</span></div>
                 </a>
               ) : (
