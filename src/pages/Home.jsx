@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import GameTable from "../components/GameTable";
+import { db } from "../js/firebase";
+import Main from "../components/Main";
 
 const Home = () => {
   const [games, setGames] = useState([]);
@@ -15,7 +15,7 @@ const Home = () => {
     return () => unsub();
   }, []);
 
-  return <GameTable games={games} />;
+  return <Main games={games} />;
 };
 
 export default Home;

@@ -1,39 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
 import GameRow from "./GameRow";
 import GameCard from "./GameCard";
 import AddGameForm from "./AddGameForm";
 import EditGameForm from "./EditGameForm";
 import Login from "./Login";
 import BackToTopButton from "./BackTopButton";
-import { FaPlus } from "react-icons/fa";
-import { AiFillEdit } from "react-icons/ai";
+import React, { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
 
-const GameTable = ({ games }) => {
-  const [search, setSearch] = useState("");
-  const [edit, setEdit] = useState(false);
-  const [opened, setOpened] = useState(false);
-  const [featuredOpen, setFeaturedOpen] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLogged, setIsLogged] = useState(localStorage.getItem("admin") === "true");
+const GamesView = ({ games, search, openButtonRef, opened, setIsLogged, isLogged, edit, isModalOpen, setIsModalOpen, featuredOpen, setFeaturedOpen }) => {
   const [withRelease, setWithRelease] = useState(true);
   const [gameToEdit, setGameToEdit] = useState(null);
-  const openButtonRef = useRef(null);
- 
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    }
-  }, [isModalOpen]);
 
   const quarterWeight = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
   const getSortValue = (release_date) => {
@@ -87,25 +64,17 @@ const GameTable = ({ games }) => {
       return a.name.localeCompare(b.name);
     });
 
-  const featured = games.reduce((closest, game) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const release = new Date(game.release_date.seconds * 1000);
-    const releaseDate = new Date(release);
-    releaseDate.setHours(0, 0, 0, 0);
-
-    const diffTime = releaseDate - today;
-
-    if (
-      diffTime >= 0 &&
-      (closest === null || diffTime < closest.diffTime)
-    ) {
-      return { game, diffTime };
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
 
-    return closest;
-  }, null)?.game;
+    return () => {
+      document.body.style.overflow = "";
+    }
+  }, [isModalOpen]);
 
   const getReleaseMessage = releaseDate => {
     const today = new Date();
@@ -148,81 +117,29 @@ const GameTable = ({ games }) => {
   
   const modalRef = useOutsideClick(handleCloseModal, [openButtonRef]);
 
+
+  const featured = games.reduce((closest, game) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const release = new Date(game.release_date.seconds * 1000);
+    const releaseDate = new Date(release);
+    releaseDate.setHours(0, 0, 0, 0);
+
+    const diffTime = releaseDate - today;
+
+    if (
+      diffTime >= 0 &&
+      (closest === null || diffTime < closest.diffTime)
+    ) {
+      return { game, diffTime };
+    }
+
+    return closest;
+  }, null)?.game;
+
   return (
-    <div className="flex flex-col items-end px-6 pb-6 max-w-full gap-10">
-      <div className="sticky top-0 bg-white z-50 flex flex-col w-full gap-6 py-4">
-        <div className="flex flex-col sm:flex-row gap-3 justify-between">
-          <Link to="/">
-            <h1 className="text-xl font-bold">{process.env.REACT_APP_TITLE}</h1>
-          </Link>
-
-          {/* Search bar */}
-          <input
-            className="px-3 py-1 rounded border w-full sm:w-2/3 lg:w-2/5"
-            type="text"
-            placeholder="Search games..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-row justify-between min-w-full sm:px-7">
-          <div>
-            <button
-              type="button"
-              className={`${opened ? "animate-pulse bg-amber-400" : "bg-blue-500"} text-sm hover:scale-110 transition text-white px-2 py-1 rounded-md sm:hidden`}
-              onClick={() => {
-                setOpened(prev => !prev);
-                setFeaturedOpen(null);
-              }}
-            >
-              {opened ? "Collaspe all" : "Expand all"}
-            </button>
-          </div>
-          {isLogged ? (
-            <div className="flex flex-row items-center gap-2">
-              {!edit && (
-                <button
-                  ref={openButtonRef}
-                  className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-green-500 text-white rounded-md hover:scale-110 transition"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <FaPlus className="block sm:hidden" />
-                  <div className="hidden sm:block">Add new game</div>
-                </button>
-              )}
-              <button
-                className={`${edit && "animate-pulse"} size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-amber-400 text-white rounded-md hover:scale-110 transition`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEdit(prev => !prev)
-                  if (!opened && !edit) {
-                    setOpened(true);
-                  }
-                }}
-              >
-                {edit ? (
-                  <FaPlus className="rotate-45 block sm:hidden" />
-                ) : (
-                  <AiFillEdit className="block sm:hidden" />
-                )}
-                <div className="hidden sm:block">
-                  {edit ? "Quit Edit Mode" : "Edit games"}
-                </div>
-              </button>
-            </div>
-          ) : (
-            <button
-              ref={openButtonRef}
-              className="text-sm sm:w-fit sm:py-2 px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <div className="">I am an admin</div>
-            </button>
-          )}
-        </div>
-      </div>
-
+    <>
       {/* Featured section */}
       {featured && (
         <div className="flex flex-col items-center w-full border rounded-xl">
@@ -274,8 +191,8 @@ const GameTable = ({ games }) => {
                 </button>
                 <span
                   className={`px-2 py-1 sm:px-4 text-sm sm:text-base rounded-full font-semibold text-center ${getReleaseMessage(featured.release_date) === "Releases today !"
-                      ? "bg-green-200 text-green-700"
-                      : "bg-amber-200 text-amber-700"
+                    ? "bg-green-200 text-green-700"
+                    : "bg-amber-200 text-amber-700"
                     }`}
                 >
                   {getReleaseMessage(featured.release_date)}
@@ -402,10 +319,8 @@ const GameTable = ({ games }) => {
           </div>
         </div>
       )}
+    </>
+  )
+}
 
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
-  );
-};
-
-export default GameTable;
+export default GamesView;

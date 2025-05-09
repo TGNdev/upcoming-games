@@ -6,7 +6,7 @@ import { ReactComponent as SwitchIcon } from "../assets/icons/switch.svg";
 import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { AiFillEdit } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
-import { deleteGameFromFirestore } from "../firebase/firebase";
+import { deleteGameFromFirestore } from "../js/firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
