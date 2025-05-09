@@ -2,15 +2,28 @@ import GameRow from "./GameRow";
 import GameCard from "./GameCard";
 import AddGameForm from "./AddGameForm";
 import EditGameForm from "./EditGameForm";
-import Login from "./Login";
+import LoginForm from "./LoginForm";
 import BackToTopButton from "./BackTopButton";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { FaPlus } from "react-icons/fa";
+import { useGame } from "./contexts/GameContext";
 
-const GamesView = ({ games, search, openButtonRef, opened, setIsLogged, isLogged, edit, isModalOpen, setIsModalOpen, featuredOpen, setFeaturedOpen }) => {
+const GamesView = ({ games, openButtonRef }) => {
+  const {
+    search,
+    opened,
+    isLogged,
+    setIsLogged,
+    edit,
+    isModalOpen,
+    setIsModalOpen,
+    featuredOpen,
+    setFeaturedOpen,
+    gameToEdit,
+    setGameToEdit
+  } = useGame();
   const [withRelease, setWithRelease] = useState(true);
-  const [gameToEdit, setGameToEdit] = useState(null);
 
   const quarterWeight = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
   const getSortValue = (release_date) => {
@@ -308,7 +321,7 @@ const GamesView = ({ games, search, openButtonRef, opened, setIsLogged, isLogged
                 />
               )
             ) : (
-              <Login
+              <LoginForm
                 onSuccess={() => {
                   localStorage.setItem("admin", "true");
                   setIsLogged(true);

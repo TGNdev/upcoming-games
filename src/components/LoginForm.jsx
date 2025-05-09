@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Login = ({ onSuccess, onClose }) => {
+const LoginForm = ({ onSuccess, onClose }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -40,4 +40,4 @@ const Login = ({ onSuccess, onClose }) => {
   );
 };
 
-export default Login;
+export default LoginForm;

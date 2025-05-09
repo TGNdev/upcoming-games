@@ -28,6 +28,7 @@ const EventsView = () => {
         events={events}
         initialDate={initialDate}
         height="auto"
+        
       />
     </div>
   );

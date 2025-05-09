@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../js/firebase";
 import Main from "../components/Main";
+import { GameProvider } from "../components/contexts/GameContext";
 
 const Home = () => {
   const [games, setGames] = useState([]);
@@ -15,7 +16,11 @@ const Home = () => {
     return () => unsub();
   }, []);
 
-  return <Main games={games} />;
+  return (
+    <GameProvider>
+      <Main games={games} />
+    </GameProvider>
+  );
 };
 
 export default Home;
