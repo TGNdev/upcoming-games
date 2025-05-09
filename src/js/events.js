@@ -26,6 +26,5 @@ export async function fetchICalEvents() {
   });
 
   return events
-    .filter(e => e.start > now) // Only future events
-    .sort((a, b) => a.start - b.start); // Soonest first
+    .sort((a, b) => a.start - b.start);
 }

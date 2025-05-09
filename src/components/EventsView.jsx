@@ -12,7 +12,11 @@ const EventsView = () => {
       .then(events => {
         setEvents(events);
         if (events.length > 0) {
-          setInitialDate(events[0].start.toISOString().split('T')[0]);
+          const today = new Date();
+          const firstFutureEvent = events.find(e => new Date(e.start) >= today);
+          const initial = firstFutureEvent ? firstFutureEvent.start : events[0].start;
+
+          setInitialDate(new Date(initial).toISOString().split('T')[0]);
         }
       })
       .catch(console.error);
@@ -28,7 +32,6 @@ const EventsView = () => {
         events={events}
         initialDate={initialDate}
         height="auto"
-        
       />
     </div>
   );

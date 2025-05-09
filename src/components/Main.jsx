@@ -99,8 +99,7 @@ const Main = ({ games }) => {
         )}
       </div>
 
-      <div className="w-full flex flex-col justify-center items-center gap-2">
-        <div className="italic animate-pulse text-amber-500">New</div>
+      <div className="w-full flex justify-center">
         <div className="flex flex-row w-full gap-4 items-center justify-center">
           <button
             className={`${viewGames && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
