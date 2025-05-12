@@ -24,14 +24,24 @@ const EventsView = () => {
 
   if (!initialDate) return <div>Loading...</div>;
 
+  function renderEventContent(eventInfo) {
+    return (
+      <>
+        <b>{eventInfo.timeText}</b>
+        <i>{eventInfo.event.title}</i>
+      </>
+    )
+  }
+
   return (
     <div className="w-full">
       <FullCalendar
-        plugins={[listPlugin]}
+        plugins={[ listPlugin ]}
         initialView="listWeek"
         events={events}
         initialDate={initialDate}
         height="auto"
+        eventContent={renderEventContent}
       />
     </div>
   );

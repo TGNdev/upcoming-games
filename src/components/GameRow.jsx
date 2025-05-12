@@ -91,7 +91,7 @@ const GameRow = ({ game, edit, setGameToEdit, setIsModalOpen }) => {
             />
           </div>
         ) : (
-          <a target="blank" href={game.link}>
+          <a target="_blank" rel="noreferrer" href={game.link}>
             <div className="hover:scale-110 transition text-base">{game.name}</div>
           </a>
         )}
@@ -179,7 +179,7 @@ const GameRow = ({ game, edit, setGameToEdit, setIsModalOpen }) => {
         ) : (
           <div className="flex flex-col divide-y">
             {game.developers.map((developer) => (
-              <a target="blank" href={developer.link} key={developer.name}>
+              <a target="_blank" rel="noreferrer" href={developer.link} key={developer.name}>
                 <div className="hover:scale-110 transition text-sm">{developer.name}</div>
               </a>
             ))}
@@ -220,7 +220,7 @@ const GameRow = ({ game, edit, setGameToEdit, setIsModalOpen }) => {
         ) : (
           <div className="flex flex-col divide-y">
             {game.editors.map((editor, index) => (
-              <a target="blank" href={editor.link} key={index}>
+              <a target="_blank" rel="noreferrer" href={editor.link} key={index}>
                 <div className="hover:scale-110 transition text-sm">{editor.name}</div>
               </a>
             ))}
@@ -292,7 +292,7 @@ const GameRow = ({ game, edit, setGameToEdit, setIsModalOpen }) => {
               ))}
             </div>
             {game.ratings.link ? (
-              <a target="blank" href={game.ratings.link}>
+              <a target="_blank" rel="noreferrer" href={game.ratings.link}>
                 <div className="text-xs text-slate-500 hover:scale-110 transition">
                   <span className="font-normal">Details on </span>
                   <span className="font-bold">OpenCritic</span>
