@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../../js/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const GameContext = createContext();
 
@@ -22,6 +23,18 @@ export const GameProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setIsModalOpen(false);
+      setEdit(false);
+      toast.success("Admin... Going dark.")
+    } catch (e) {
+      console.error("Error logging out: ", e);
+      throw e;
+    }
+  }
+
   return (
     <GameContext.Provider
       value={{
@@ -40,7 +53,8 @@ export const GameProvider = ({ children }) => {
         featuredOpen,
         setFeaturedOpen,
         gameToEdit,
-        setGameToEdit
+        setGameToEdit,
+        logout,
       }}
     >
       {children}

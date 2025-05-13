@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { AiFillEdit } from "react-icons/ai";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,7 +17,8 @@ const Main = ({ games }) => {
     isLogged,
     edit, setEdit,
     setIsModalOpen,
-    setFeaturedOpen
+    setFeaturedOpen,
+    logout,
   } = useGame();
 
   return (
@@ -85,6 +86,15 @@ const Main = ({ games }) => {
                     {edit ? "Quit Edit Mode" : "Edit games"}
                   </div>
                 </button>
+                {isLogged && (
+                  <button
+                    onClick={logout}
+                    className="size-6 p-1 sm:text-sm sm:w-fit sm:py-2 sm:px-2.5 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
+                  >
+                    <FaSignOutAlt className="block sm:hidden" />
+                    <div className="hidden sm:block">Logout</div>
+                  </button>
+                )}
               </div>
             ) : (
               <button

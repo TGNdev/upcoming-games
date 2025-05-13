@@ -12,7 +12,7 @@ const LoginForm = ({ onSuccess, onClose }) => {
 
     try {
       await signIn(email, password);
-      toast.success("Keep gaming admin !");
+      toast.success("Admin is gaming !");
       onSuccess();
     } catch (error) {
       setError("You are NOT an admin.");
