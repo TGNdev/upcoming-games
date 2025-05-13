@@ -6,16 +6,14 @@ import LoginForm from "./LoginForm";
 import BackToTopButton from "./BackTopButton";
 import { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter } from "react-icons/fa";
 import { useGame } from "./contexts/GameContext";
-import { signIn } from "../js/firebase";
 
 const GamesView = ({ games, openButtonRef }) => {
   const {
     search,
     opened,
     isLogged,
-    setIsLogged,
     edit,
     isModalOpen,
     setIsModalOpen,
@@ -25,6 +23,32 @@ const GamesView = ({ games, openButtonRef }) => {
     setGameToEdit
   } = useGame();
   const [withRelease, setWithRelease] = useState(true);
+  const [selectedPlatforms, setSelectedPlatforms] = useState(() => {
+    const saved = localStorage.getItem('gameFilters');
+    return saved ? JSON.parse(saved).selectedPlatforms || [] : [];
+  });
+  const [showOnlyUpcoming, setShowOnlyUpcoming] = useState(() => {
+    const saved = localStorage.getItem('gameFilters');
+    return saved ? JSON.parse(saved).showOnlyUpcoming ?? null : null
+  });
+  const [filtersVisible, setFiltersVisible] = useState(() => {
+    const saved = localStorage.getItem('gameFilters');
+    if (saved) {
+      const { selectedPlatforms = [], showOnlyUpcoming = null } = JSON.parse(saved);
+      return (selectedPlatforms.length > 0 || showOnlyUpcoming !== null);
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const filters = {
+      selectedPlatforms,
+      showOnlyUpcoming,
+      withRelease
+    };
+    localStorage.setItem('gameFilters', JSON.stringify(filters));
+  }, [selectedPlatforms, showOnlyUpcoming, withRelease]);
+
 
   const quarterWeight = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
   const getSortValue = (release_date) => {
@@ -54,6 +78,28 @@ const GamesView = ({ games, openButtonRef }) => {
     return Infinity;
   };
 
+  const getPlatformArray = (platformsObj) => {
+    if (Array.isArray(platformsObj)) return platformsObj;
+    if (typeof platformsObj === 'object' && platformsObj !== null) {
+      return Object.entries(platformsObj)
+        .filter(([_, enabled]) => enabled)
+        .map(([key]) => key.toUpperCase());
+    }
+    return [];
+  };
+
+  const allPlatforms = Array.from(
+    new Set(games.flatMap(game => getPlatformArray(game.platforms)))
+  ).sort();
+
+  const platformLabels = {
+    pc: "PC",
+    ps: "PlayStation",
+    xbox: "Xbox",
+    switch: "Switch",
+    switch_2: "Switch 2"
+  };
+
   const filtered = games
     .filter(game => {
       if (withRelease) {
@@ -62,19 +108,32 @@ const GamesView = ({ games, openButtonRef }) => {
         return typeof game.release_date === "string";
       }
     })
-    .filter(game =>
-      game.name.toLowerCase().includes(search.toLowerCase()) ||
-      game.developers.some(dev => dev.name.toLowerCase().includes(search.toLowerCase())) ||
-      game.editors.some(editor => editor.name.toLowerCase().includes(search.toLowerCase()))
-    )
+    .filter(game => {
+      // Search
+      const matchesSearch = game.name.toLowerCase().includes(search.toLowerCase()) ||
+        game.developers.some(dev => dev.name.toLowerCase().includes(search.toLowerCase())) ||
+        game.editors.some(editor => editor.name.toLowerCase().includes(search.toLowerCase()));
+
+      // Platforms
+      const matchesPlatform = selectedPlatforms.length === 0 || selectedPlatforms.every(platform =>
+        getPlatformArray(game.platforms).includes(platform)
+      );
+
+      // Release status
+      const isTimestamp = game.release_date instanceof Timestamp;
+      let matchesReleaseStatus = true;
+      if (isTimestamp && showOnlyUpcoming !== null) {
+        const release = new Date(game.release_date.seconds * 1000);
+        const now = new Date();
+        matchesReleaseStatus = showOnlyUpcoming ? release >= now : release < now;
+      }
+
+      return matchesSearch && matchesPlatform && matchesReleaseStatus;
+    })
     .sort((a, b) => {
       const aSort = getSortValue(a.release_date);
       const bSort = getSortValue(b.release_date);
-
-      if (aSort !== bSort) {
-        return aSort - bSort;
-      }
-
+      if (aSort !== bSort) return aSort - bSort;
       return a.name.localeCompare(b.name);
     });
 
@@ -236,9 +295,99 @@ const GamesView = ({ games, openButtonRef }) => {
         </div>
       </div>
 
+      <div className="w-full flex flex-col items-end gap-4">
+        {/* Toggle Button */}
+        <div className="flex justify-center mt-4">
+          <button
+            className="flex items-center text-sm gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-500 transition"
+            onClick={() => setFiltersVisible(prev => !prev)}
+          >
+            <FaFilter />
+            {filtersVisible ? "Hide Filters" : "Show Filters"}
+          </button>
+        </div>
+        {/* Filters */}
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out w-full ${
+            filtersVisible ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="flex flex-col gap-4 items-center md:flex-row md:items-center md:justify-center md:flex-wrap w-full">
+            {/* Platform Filter */}
+            <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+              {allPlatforms.map(platform => (
+                <button
+                  key={platform}
+                  className={`px-3 py-1 rounded-full border text-sm ${
+                    selectedPlatforms.includes(platform)
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-black"
+                  }`}
+                  onClick={() => {
+                    setSelectedPlatforms(prev =>
+                      prev.includes(platform)
+                        ? prev.filter(p => p !== platform)
+                        : [...prev, platform]
+                    );
+                  }}
+                >
+                  {platformLabels[platform.toLowerCase()] || platform}
+                </button>
+              ))}
+            </div>
+            {/* Release Status Filter */}
+            <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+              <button
+                className={`px-3 py-1 rounded-full border text-sm ${
+                  showOnlyUpcoming === true
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => setShowOnlyUpcoming(true)}
+              >
+                Upcoming only
+              </button>
+              <button
+                className={`px-3 py-1 rounded-full border text-sm ${
+                  showOnlyUpcoming === false
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => setShowOnlyUpcoming(false)}
+              >
+                Already released
+              </button>
+              <button
+                className={`px-3 py-1 rounded-full border text-sm ${
+                  showOnlyUpcoming === null
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => setShowOnlyUpcoming(null)}
+              >
+                All
+              </button>
+            </div>
+            {/* Reset */}
+            <div className="flex justify-center md:justify-start">
+              <button
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm"
+                onClick={() => {
+                  setSelectedPlatforms([]);
+                  setShowOnlyUpcoming(null);
+                  localStorage.removeItem('gameFilters');
+                }}
+              >
+                Reset filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Table */}
-      <div className="flex flex-col max-w-full overflow-x-auto">
-        <div className="relative hidden sm:block">
+      <div className="flex-col max-w-full overflow-x-auto hidden sm:flex -mt-4">
+        <div className="relative">
           <table className="w-full table-fixed border-collapse min-w-[900px]">
             <thead className="border-b">
               <tr>
@@ -275,7 +424,7 @@ const GamesView = ({ games, openButtonRef }) => {
       </div>
 
       {/* Cards */}
-      <div className="overflow-y-auto min-w-full sm:hidden pb-8 -mt-8">
+      <div className="overflow-y-auto min-w-full sm:hidden pb-8">
         <div className="flex flex-col gap-5">
           {filtered.map(game => (
             <GameCard
