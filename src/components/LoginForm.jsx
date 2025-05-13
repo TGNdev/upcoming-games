@@ -1,29 +1,42 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { signIn } from "../js/firebase";
+import { toast } from "react-toastify";
 
 const LoginForm = ({ onSuccess, onClose }) => {
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (password === process.env.REACT_APP_ADMIN_PASSWORD) {
-      localStorage.setItem("admin", "true");
+    try {
+      await signIn(email, password);
+      toast.success("Keep gaming admin !");
       onSuccess();
-    } else {
-      setError("Nah, you're not an admin bro.")
+    } catch (error) {
+      setError("You are NOT an admin.");
     }
   };
 
   return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-6">
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter admin password"
-        className="border px-3 py-2 rounded"
-      />
+      <div className="w-full flex flex-row gap-3 justify-between">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter admin email"
+          className="border px-3 py-2 rounded w-full"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter admin password"
+          className="border px-3 py-2 rounded w-full"
+        />
+      </div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="flex justify-between items-center">
         <button

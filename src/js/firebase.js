@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -11,6 +12,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = initializeFirestore(app, {
     localCache: persistentLocalCache({
         tabManager: persistentMultipleTabManager(),
@@ -43,4 +45,13 @@ export const editGameFromFirestore = async (gameId, gameData) => {
     }
 }
 
-export { db };
+export const signIn = async (email, password) => {
+    try {
+        return await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+        console.error("Error logging in: ", e);
+        throw e;
+    }
+};
+
+export { db, auth };

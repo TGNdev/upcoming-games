@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { FaPlus } from "react-icons/fa";
 import { useGame } from "./contexts/GameContext";
+import { signIn } from "../js/firebase";
 
 const GamesView = ({ games, openButtonRef }) => {
   const {
@@ -322,10 +323,7 @@ const GamesView = ({ games, openButtonRef }) => {
               )
             ) : (
               <LoginForm
-                onSuccess={() => {
-                  localStorage.setItem("admin", "true");
-                  setIsLogged(true);
-                }}
+                onSuccess={handleCloseModal}
                 onClose={handleCloseModal}
               />
             )}
