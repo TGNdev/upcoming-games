@@ -22,7 +22,7 @@ const Main = ({ games }) => {
   } = useGame();
 
   return (
-    <div className="flex flex-col items-end px-6 pb-6 max-w-full gap-10">
+    <div className="flex flex-col items-end px-6 pb-6 max-w-full gap-7 sm:gap-10">
       <div className="sticky top-0 bg-white z-50 flex flex-col w-full gap-6 py-4">
         <div className="flex flex-col sm:flex-row gap-3 justify-between">
           <Link to="/">
