@@ -35,7 +35,7 @@ const EventsView = () => {
   });
 
   const groupedByDay = eventsThisWeek.reduce((acc, event) => {
-    const dateKey = new Date(event.start).toISOString().split('T')[0];
+    const dateKey = new Date(event.start).toLocaleDateString('en-US');
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(event);
     return acc;
@@ -45,24 +45,37 @@ const EventsView = () => {
 
   return (
     <div className="w-full flex flex-col justify-between">
-      <div className='flex justify-end'>
-        {currentWeekStart.getTime() !== todayWeekStart.getTime() && (
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+        <div className='flex justify-end w-full sm:w-auto'>
+          <input
+            type="date"
+            className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={currentWeekStart.toISOString().slice(0, 10)}
+            onChange={e => {
+              const selectedDate = new Date(e.target.value);
+              if (!isNaN(selectedDate)) {
+                setCurrentWeekStart(getStartOfWeek(selectedDate));
+              }
+            }}
+            aria-label="Jump to week by date"
+          />
+          {currentWeekStart.getTime() !== todayWeekStart.getTime() && (
             <button
               onClick={() => setCurrentWeekStart(todayWeekStart)}
-              className="hidden sm:flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
+              className="flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
             >
               Today
             </button>
           )}
-
           {firstFutureWeekStart && currentWeekStart.getTime() !== firstFutureWeekStart.getTime() && (
             <button
               onClick={() => setCurrentWeekStart(firstFutureWeekStart)}
-              className="hidden sm:flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
+              className="flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
             >
               Next Event
             </button>
           )}
+        </div>
       </div>
       <div className="flex flex-row justify-between sm:items-center mb-8 gap-2">
         <div className="flex flex-row gap-2">
@@ -88,7 +101,7 @@ const EventsView = () => {
         </button>
       </div>
       {eventsThisWeek.length === 0 ? (
-        <div className="text-gray-500 text-center mt-12">No events this week</div>
+        <div className="text-gray-500 text-center p-20 border rounded-md bg-slate-100">No events this week</div>
       ) : (
         sortedDays.map(date => (
           <div key={date} className="mb-6">
@@ -97,21 +110,23 @@ const EventsView = () => {
               {groupedByDay[date].map((event, i) => (
                 <li
                   key={i}
-                  className={`p-3 border rounded shadow-sm ${i % 2 === 1 ? 'bg-slate-100' : ''}`}
+                  className={`p-3 border rounded shadow-md ${i % 2 === 1 ? 'bg-slate-100' : ''}`}
                 >
                   <div className='flex flex-row justify-between items-center'>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-1'>
                       <p className="font-medium">{event.title}</p>
-                      <p className="text-sm text-gray-600">
-                        {formatTimeRange(event.start, event.end)}
-                      </p>
+                      <p className='text-xs'>{event.description}</p>
+                      <div className="flex flex-row gap-4 items-center text-sm text-gray-600">
+                        <div>{formatTimeRange(event.start, event.end)}</div>
+                        <div className='text-xs italic text-slate-400'>({formatDuration(event.duration)})</div>
+                      </div>
                     </div>
                     {event.source === 'ical' && (
                       <>
-                        <div className='bg-blue-100 text-blue-500 rounded-md h-fit text-sm px-2 py-1 italic hidden sm:block'>
+                        <div className='bg-blue-100 text-blue-500 rounded-md h-fit text-sm px-2 py-1 italic hidden sm:block text-center'>
                           Official SGF Calendar
                         </div>
-                        <div className='bg-blue-100 text-blue-500 rounded-md h-fit text-xs px-2 py-1 italic block sm:hidden'>
+                        <div className='bg-blue-100 text-blue-500 rounded-md h-fit text-xs px-2 py-1 italic block sm:hidden text-center'>
                           SGF Cal.
                         </div>
                       </>
@@ -150,6 +165,17 @@ function formatDate(date) {
     day: 'numeric',
     year: 'numeric',
   });
+}
+
+function formatDuration(duration) {
+  if (!duration) return '';
+  const hours = duration.hours || 0;
+  const minutes = duration.minutes || 0;
+  let result = '';
+  if (hours > 0) result += `${hours}h`;
+  if (minutes > 0) result += `${minutes}min`;
+  if (!result) result = '0min';
+  return result;
 }
 
 function formatTimeRange(start, end) {

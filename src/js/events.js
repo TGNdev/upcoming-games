@@ -18,8 +18,10 @@ export async function fetchICalEvents() {
 
     return {
       title: e.summary,
+      description: e.description,
       start,
       end,
+      duration: e.duration,
       allDay: e.startDate.isDate,
       source: 'ical'
     };
@@ -36,8 +38,10 @@ export async function fetchFirestoreEvents() {
     return {
       id: doc.id,
       title: data.title,
+      description: data.description,
       start: data.start.toDate ? data.start.toDate() : new Date(data.start),
       end: data.end?.toDate ? data.end.toDate() : (data.end ? new Date(data.end) : null),
+      duration: data.duration,
       allDay: data.allDay || false,
       source: 'custom'
     };
