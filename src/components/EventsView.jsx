@@ -30,8 +30,13 @@ const EventsView = () => {
   currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
 
   const eventsThisWeek = allEvents.filter(event => {
-    const date = new Date(event.start);
-    return date >= currentWeekStart && date <= currentWeekEnd;
+    const eventDate = new Date(event.start);
+    const localDate = new Date(
+      eventDate.getFullYear(),
+      eventDate.getMonth(),
+      eventDate.getDate()
+    );
+    return localDate >= currentWeekStart && localDate <= currentWeekEnd;
   });
 
   const groupedByDay = eventsThisWeek.reduce((acc, event) => {
