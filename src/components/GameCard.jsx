@@ -9,7 +9,7 @@ import { FaThumbsUp } from "react-icons/fa6";
 import { AiFillEdit } from "react-icons/ai";
 
 const getPlatformsSvg = (platform) => {
-  const base = "size-8 rounded p-1.5";
+  const base = `size-5 p-1`;
   switch (platform) {
     case "xbox":
       return <XboxIcon className={`${base} bg-green-500`} fill="white" />;
@@ -48,7 +48,7 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
     <div id={`gamecard-${game.id}`} className={`${forceOpen ? "" : ""} bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 relative`}>
       {/* Header (Toggle) */}
       <button
-        className="w-full flex justify-between items-center px-7 pt-6 pb-3 text-left bg-slate-100 hover:bg-slate-200 transition"
+        className="w-full flex justify-between items-center px-7 pt-7 pb-3 text-left bg-slate-100 hover:bg-slate-200 transition"
         onClick={() => {
           const closing = isOpen && forceOpen;
           setIsOpen(prev => !prev);
@@ -74,16 +74,25 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
         />
       </button>
 
-      {/* Released badge */}
-      {isReleased() ? (
-        <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 rounded z-20">
-          Released
+      <div className="absolute top-0 left-0 flex flex-row">
+        {/* Released badge */}
+        {isReleased() ? (
+          <div className="bg-green-500 text-white text-xs font-bold px-1.5 py-0.5 z-20">
+            Released
+          </div>
+        ) : (
+          <div className="bg-amber-400 text-white text-xs font-bold px-1.5 py-0.5 z-20">
+            Coming soon
+          </div>
+        )}
+        <div className="flex flex-row items-center h-5">
+          {platforms.sort().map((platform, idx) => (
+            <span key={idx}>
+              {getPlatformsSvg(platform)}
+            </span>
+          ))}
         </div>
-      ) : (
-        <div className="absolute top-0 left-0 bg-amber-400 text-white text-xs font-bold px-1.5 py-0.5 rounded z-20">
-          Coming soon
-        </div>
-      )}
+      </div>
 
       {/* Content drawer */}
       <div
@@ -132,46 +141,10 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
                 <div className={`transition-all duration-300 overflow-hidden ${showEditors ? "max-h-96 mt-2" : "max-h-0"}`}>
                   <div className="space-y-1 text-sm pt-2">
                     {game.editors.map((edit, idx) => (
-                      <a target="_blank" rel="noreferer" href={edit.link} key={idx} className="block hover:scale-105 transition">{edit.name}</a>
+                      <a target="_blank" rel="noreferrer" href={edit.link} key={idx} className="block hover:scale-105 transition">{edit.name}</a>
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Platforms */}
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* Wrapper for all platforms */}
-                <div className="flex items-center gap-2 overflow-hidden">
-                  {/* Always show first 2 */}
-                  {platforms.sort().slice(0, 2).map((platform, idx) => (
-                    <span key={idx}>{getPlatformsSvg(platform)}</span>
-                  ))}
-
-                  {/* Horizontally animated extra platforms */}
-                  <div
-                    className="flex items-center gap-2 transition-all duration-200 ease-linear"
-                    style={{
-                      maxWidth: showAllPlatforms ? `${platforms.slice(2).length * 42}px` : "0px",
-                      opacity: showAllPlatforms ? 1 : 0,
-                    }}
-                  >
-                    {platforms.slice(2).map((platform, idx) => (
-                      <span key={`extra-${idx}`} className="">
-                        {getPlatformsSvg(platform)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Toggle Button at the far end */}
-                {platforms.length > 2 && (
-                  <button
-                    onClick={() => setShowAllPlatforms((prev) => !prev)}
-                    className={`${showAllPlatforms ? "text-2xl" : "text-sm"} font-bold hover:scale-110 transition`}
-                  >
-                    {showAllPlatforms ? "-" : `+${platforms.length - 2}`}
-                  </button>
-                )}
               </div>
 
               {edit && (
@@ -215,7 +188,7 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
                 );
               })}
               {game.ratings.link ? (
-                <a target="_blank" rel="noreferer" href={game.ratings.link} className="text-center">
+                <a target="_blank" rel="noreferrer" href={game.ratings.link} className="text-center">
                   <div className="text-xs text-slate-500 hover:scale-110 transition"><span className="font-normal">Details on</span> <span className="font-bold">OpenCritic</span></div>
                 </a>
               ) : (
