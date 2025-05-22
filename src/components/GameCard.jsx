@@ -6,7 +6,6 @@ import { ReactComponent as SwitchIcon } from "../assets/icons/switch.svg";
 import { ReactComponent as Switch2Icon } from "../assets/icons/switch_2.svg";
 import { FiChevronDown } from "react-icons/fi";
 import { FaThumbsUp } from "react-icons/fa6";
-import { AiFillEdit } from "react-icons/ai";
 
 const getPlatformsSvg = (platform) => {
   const base = `size-5 p-1`;
@@ -28,9 +27,6 @@ const getPlatformsSvg = (platform) => {
 
 const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen, setGameToEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showDevs, setShowDevs] = useState(false);
-  const [showEditors, setShowEditors] = useState(false);
-  const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
   useEffect(() => {
     setIsOpen(opened || forceOpen);
@@ -104,47 +100,20 @@ const GameCard = ({ game, edit, opened, forceOpen, setForceOpen, setIsModalOpen,
           <div className="p-4 flex flex-row gap-6 relative">
             <div className="flex flex-1 flex-col gap-6">
               {/* Developers */}
-              <div>
-                <button
-                  onClick={() => setShowDevs(prev => !prev)}
-                  className="text-sm font-bold hover:scale-110 transition"
-                >
-                  <div className="flex flex-row gap-3 items-center">
-                    <div>Show developer{game.developers.length > 1 ? `s (${game.developers.length})` : ""}</div>
-                    <FiChevronDown
-                      className={`text-base text-black transform transition-transform duration-300 ${showDevs ? "rotate-180" : ""}`}
-                    />
-                  </div>
-                </button>
-                <div className={`transition-all overflow-auto ${showDevs ? "max-h-96 mt-2" : "max-h-0"}`}>
-                  <div className="flex flex-col gap-1 text-sm pt-2">
-                    {game.developers.map((dev, idx) => (
-                      <a target="_blank" rel="noreferrer" href={dev.link} key={idx} className="hover:scale-105 transition">{dev.name}</a>
-                    ))}
-                  </div>
-                </div>
+              <div className="flex flex-col gap-1 text-sm pt-2">
+                <div className="font-semibold">Developers :</div>
+                {game.developers.map((dev, idx) => (
+                  <a target="_blank" rel="noreferrer" href={dev.link} key={idx} className="hover:scale-105 transition">{dev.name}</a>
+                ))}
               </div>
 
+
               {/* Editors */}
-              <div>
-                <button
-                  onClick={() => setShowEditors(prev => !prev)}
-                  className="text-sm font-bold hover:scale-110 transition"
-                >
-                  <div className="flex flex-row gap-3 items-center">
-                    <div>Show editor{game.editors.length > 1 ? `s (${game.editors.length})` : ""}</div>
-                    <FiChevronDown
-                      className={`text-base text-black transform transition-transform duration-300 ${showEditors ? "rotate-180" : ""}`}
-                    />
-                  </div>
-                </button>
-                <div className={`transition-all duration-300 overflow-hidden ${showEditors ? "max-h-96 mt-2" : "max-h-0"}`}>
-                  <div className="space-y-1 text-sm pt-2">
-                    {game.editors.map((edit, idx) => (
-                      <a target="_blank" rel="noreferrer" href={edit.link} key={idx} className="block hover:scale-105 transition">{edit.name}</a>
-                    ))}
-                  </div>
-                </div>
+              <div className="flex flex-col gap-1 text-sm pt-2">
+                <div className="font-semibold">Editors :</div>
+                {game.editors.map((edit, idx) => (
+                  <a target="_blank" rel="noreferrer" href={edit.link} key={idx} className="hover:scale-105 transition">{edit.name}</a>
+                ))}
               </div>
 
               {edit && (

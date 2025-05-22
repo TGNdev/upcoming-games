@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchMergedEvents } from '../js/events';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { useGame } from './contexts/GameContext';
 
 const EventsView = () => {
   const [allEvents, setAllEvents] = useState([]);
   const [currentWeekStart, setCurrentWeekStart] = useState(null);
   const [todayWeekStart, setTodayWeekStart] = useState(getStartOfWeek(new Date()));
   const [firstFutureWeekStart, setFirstFutureWeekStart] = useState(null);
+  const initialWeekStartRef = useRef(null);
+  const { search } = useGame();
 
   useEffect(() => {
     fetchMergedEvents()
@@ -18,11 +21,32 @@ const EventsView = () => {
         const futureEvent = events.find(e => new Date(e.start) >= today);
         const initialDate = futureEvent ? new Date(futureEvent.start) : new Date(events[0].start);
         const initialWeekStart = getStartOfWeek(initialDate);
+
         setCurrentWeekStart(initialWeekStart);
         setFirstFutureWeekStart(initialWeekStart);
+        initialWeekStartRef.current = initialWeekStart;
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!allEvents.length || !initialWeekStartRef.current) return;
+
+    if (!search.trim()) {
+      setCurrentWeekStart(initialWeekStartRef.current);
+      return;
+    }
+
+    const match = allEvents.find(e =>
+      e.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (match) {
+      const matchDate = new Date(match.start);
+      setCurrentWeekStart(getStartOfWeek(matchDate));
+    }
+  }, [search, allEvents]);
+
 
   if (!currentWeekStart) return <div>Loading events...</div>;
 
@@ -48,13 +72,28 @@ const EventsView = () => {
 
   const sortedDays = Object.keys(groupedByDay).sort((a, b) => new Date(a) - new Date(b));
 
+  function highlightMatch(text, query) {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={i} className="bg-yellow-200 font-semibold rounded">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  }
+
   return (
     <div className="w-full flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-        <div className='flex justify-end w-full sm:w-auto'>
+        <div className='flex justify-end w-full sm:w-auto gap-3'>
           <input
             type="date"
-            className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border px-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={currentWeekStart.toISOString().slice(0, 10)}
             onChange={e => {
               const selectedDate = new Date(e.target.value);
@@ -67,7 +106,7 @@ const EventsView = () => {
           {currentWeekStart.getTime() !== todayWeekStart.getTime() && (
             <button
               onClick={() => setCurrentWeekStart(todayWeekStart)}
-              className="flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
+              className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
             >
               Today
             </button>
@@ -75,35 +114,36 @@ const EventsView = () => {
           {firstFutureWeekStart && currentWeekStart.getTime() !== firstFutureWeekStart.getTime() && (
             <button
               onClick={() => setCurrentWeekStart(firstFutureWeekStart)}
-              className="flex items-center rounded-md px-3 py-2 text-sm hover:bg-gray-300 transition"
+              className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
             >
               Next Event
             </button>
           )}
         </div>
       </div>
-      <div className="flex flex-row justify-between sm:items-center mb-8 gap-2">
-        <div className="flex flex-row gap-2">
-          <button
-            onClick={() => shiftWeek(-1)}
-            className="size-6 p-1 sm:w-fit sm:py-2 sm:px-3 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
-          >
-            <FaArrowLeft className='block sm:hidden' />
-            <div className='hidden sm:block'>Previous</div>
-          </button>
-        </div>
-
-        <h1 className="text-xl font-bold text-center sm:text-left">
+      <div className="flex flex-row justify-between items-center mb-8 gap-2">
+        <div className="flex-1" />
+        <h1 className="sm:text-xl font-bold text-center absolute left-1/2 transform -translate-x-1/2">
           {formatWeekRange(currentWeekStart)}
         </h1>
 
-        <button
-          onClick={() => shiftWeek(1)}
-          className="size-6 p-1 sm:w-fit sm:py-2 sm:px-3 sm:flex flex-row items-center bg-blue-500 text-white rounded-md hover:scale-110 transition"
-        >
-          <FaArrowRight className='block sm:hidden' />
-          <div className='hidden sm:block'>Next</div>
-        </button>
+        <div className="flex flex-row gap-2 text-xs sm:text-base">
+          <button
+            onClick={() => shiftWeek(-1)}
+            className="p-2 bg-blue-500 text-white rounded-md hover:scale-110 transition"
+            aria-label="Previous week"
+          >
+            <FaArrowLeft />
+          </button>
+
+          <button
+            onClick={() => shiftWeek(1)}
+            className="p-2 bg-blue-500 text-white rounded-md hover:scale-110 transition"
+            aria-label="Next week"
+          >
+            <FaArrowRight />
+          </button>
+        </div>
       </div>
       {eventsThisWeek.length === 0 ? (
         <div className="text-gray-500 text-center p-20 border rounded-md bg-slate-100">No events this week</div>
@@ -117,9 +157,11 @@ const EventsView = () => {
                   key={i}
                   className={`p-3 border rounded shadow-md ${i % 2 === 1 ? 'bg-slate-100' : ''}`}
                 >
-                  <div className='flex flex-row justify-between items-center'>
+                  <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-col gap-1'>
-                      <p className="font-medium">{event.title}</p>
+                      <p className="font-medium">
+                        {highlightMatch(event.title, search)}
+                      </p>
                       <p className='text-xs'>{event.description}</p>
                       <div className="flex flex-row gap-4 items-center text-sm text-gray-600">
                         <div>{formatTimeRange(event.start, event.end)}</div>

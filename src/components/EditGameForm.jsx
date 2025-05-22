@@ -5,6 +5,7 @@ import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import SuggestionDropdown from "./SuggestionDropdown";
 import isEqual from "lodash.isequal";
+import Modal from "./Modal";
 
 const platformOptions = ["pc", "ps", "xbox", "switch", "switch_2"];
 const platformLabels = {
@@ -137,8 +138,7 @@ const EditGameForm = ({ game, games, onSuccess }) => {
   };
 
   return (
-    <div className="sm:px-8 py-5">
-      <h2 className="text-2xl font-bold mb-4">Edit {game.name}</h2>
+    <Modal title={`Edit ${game.name}`}>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Info */}
         <div className="flex flex-col gap-4">
@@ -382,7 +382,7 @@ const EditGameForm = ({ game, games, onSuccess }) => {
           )}
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
 

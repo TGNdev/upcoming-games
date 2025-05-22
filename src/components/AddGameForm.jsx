@@ -4,6 +4,7 @@ import { addGameToFirestore } from "../js/firebase";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import SuggestionDropdown from "./SuggestionDropdown";
+import Modal from "./Modal";
 
 const platformOptions = ["pc", "ps", "xbox", "switch", "switch_2"];
 const platformLabels = {
@@ -139,8 +140,7 @@ const AddGameForm = ({ games, onSuccess }) => {
   };
 
   return (
-    <div className="sm:px-8 py-5">
-      <h2 className="text-2xl font-bold mb-4">Add a new game</h2>
+    <Modal title={"Add a new game"}>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Info */}
         <div className="flex flex-col gap-4">
@@ -389,7 +389,7 @@ const AddGameForm = ({ games, onSuccess }) => {
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
 
