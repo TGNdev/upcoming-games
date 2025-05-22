@@ -20,7 +20,8 @@ const GamesView = ({ games, openButtonRef }) => {
     featuredOpen,
     setFeaturedOpen,
     gameToEdit,
-    setGameToEdit
+    setGameToEdit,
+    handleCloseModal,
   } = useGame();
   const [withRelease, setWithRelease] = useState(true);
   const [selectedPlatforms, setSelectedPlatforms] = useState(() => {
@@ -159,9 +160,6 @@ const GamesView = ({ games, openButtonRef }) => {
     if (diffDays === 1) return "Releases tomorrow";
     if (diffDays > 1) return `Releases in ${diffDays} days`;
     return "Already released";
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   const useOutsideClick = (callback, exceptions = []) => {

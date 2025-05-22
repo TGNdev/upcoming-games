@@ -35,6 +35,10 @@ export const GameProvider = ({ children }) => {
     }
   }
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -55,6 +59,7 @@ export const GameProvider = ({ children }) => {
         gameToEdit,
         setGameToEdit,
         logout,
+        handleCloseModal,
       }}
     >
       {children}

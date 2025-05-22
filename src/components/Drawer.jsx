@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useGame } from "./contexts/GameContext";
 
 const Drawer = () => {
   const [open, setOpen] = useState(false);
+  const {
+    logout,
+    isLogged,
+    setIsModalOpen
+  } = useGame();
 
   return (
     <>
@@ -28,7 +34,7 @@ const Drawer = () => {
 
       {/* Drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"
+        className={`fixed top-0 right-0 h-full w-64 sm:w-96 bg-white text-lg shadow-lg z-50 transform transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"
           }`}
         aria-label="Navigation drawer"
       >
@@ -41,9 +47,23 @@ const Drawer = () => {
           <FiX size={24} />
         </button>
         {/* Navigation Content */}
-        <nav className="mt-16 flex flex-col gap-4 px-6">
-          <Link to="/" className="text-gray-700 hover:text-blue-600 transition">Home</Link>
-          <Link to="/leaks-rumours" className="text-gray-700 hover:text-blue-600 transition">Leaks & Rumours</Link>
+        <nav className="mt-16 flex flex-col gap-4 px-6 text-slate-700">
+          <Link to="/" className="hover:text-blue-500 transition">Home</Link>
+          <Link to="/leaks-rumours" className="hover:text-blue-600 transition">Leaks & Rumours</Link>
+          <div className="border my-6"></div>
+          <button
+            className="text-left hover:scale-105 rounded-md text-white py-1.5 px-2 border bg-blue-500 w-fit transition"
+            onClick={() => {
+              setOpen(false);
+              setIsModalOpen(true);
+            }}
+          >
+            {isLogged ? (
+              <div>Logout</div>
+            ) : (
+              <div>I am an admin</div>
+            )}
+          </button>
         </nav>
       </aside>
     </>

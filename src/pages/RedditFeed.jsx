@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { GameProvider } from "../components/contexts/GameContext";
 import Layout from "../components/Layout";
+import he from 'he';
 
 const RedditFeed = () => {
   const [posts, setPosts] = useState([]);
@@ -49,7 +50,7 @@ const RedditFeed = () => {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline text-lg font-semibold"
                 >
-                  {post.title}
+                  {he.decode(post.title)}
                 </a>
                 <p className="text-sm text-gray-500 mt-2">
                   Published: {formatDate(post.created_utc)}
