@@ -37,9 +37,11 @@ const RedditFeed = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
+        const corsProxy = "https://corsproxy.io/?";
+        const redditUrl = encodeURIComponent(
           `https://www.reddit.com/r/GamingLeaksAndRumours/new.json?limit=${postLimit}`
         );
+        const res = await fetch(`${corsProxy}${redditUrl}`);
         const json = await res.json();
         const rawPosts = json.data.children.map((child) => child.data);
         const filteredPosts = rawPosts.filter((post) => !post.stickied);

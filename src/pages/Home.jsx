@@ -13,6 +13,7 @@ const Home = () => {
   const [games, setGames] = useState([]);
   const [viewGames, setViewGames] = useState(true);
   const openButtonRef = useRef(null);
+  const [transitioning, setTransitioning] = useState(false);
   const {
     setSearch,
     opened, setOpened,
@@ -30,6 +31,17 @@ const Home = () => {
 
     return () => unsub();
   }, []);
+
+  const handleViewSwitch = (toGames) => {
+    if (viewGames === toGames) return;
+
+    setTransitioning(true);
+    setTimeout(() => {
+      setViewGames(toGames);
+      setSearch("");
+      setTransitioning(false);
+    }, 300);
+  };
 
   return (
     <Layout>
@@ -104,34 +116,27 @@ const Home = () => {
           <div className="flex flex-row w-full gap-4 items-center justify-center">
             <button
               className={`${viewGames && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
-              onClick={() => {
-                setViewGames(true);
-                setSearch("");
-              }}
+              onClick={() => handleViewSwitch(true)}
               disabled={viewGames}
             >
               Games
             </button>
             <button
               className={`${!viewGames && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
-              onClick={() => {
-                setViewGames(false);
-                setSearch("");
-              }}
+              onClick={() => handleViewSwitch(false)}
               disabled={!viewGames}
             >
               Events
             </button>
           </div>
         </div>
-        {viewGames ? (
-          <GamesView
-            games={games}
-            openButtonRef={openButtonRef}
-          />
-        ) : (
-          <EventsView />
-        )}
+        <div className={`transition-opacity duration-300 ${transitioning ? "opacity-0" : "opacity-100"} w-full`}>
+          {viewGames ? (
+            <GamesView games={games} openButtonRef={openButtonRef} />
+          ) : (
+            <EventsView />
+          )}
+        </div>
         <ToastContainer position="top-right" autoClose={3000} />
       </div>
     </Layout>
