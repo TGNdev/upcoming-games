@@ -114,7 +114,7 @@ const RedditFeed = () => {
                   className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 border border-gray-200"
                 >
                   <div
-                    className="absolute -top-2 -left-2 -rotate-6 text-white py-0.5 px-1 text-sm rounded-md"
+                    className="absolute -top-2 -left-2 -rotate-6 text-white py-0.5 px-2 text-sm rounded-md"
                     style={{ backgroundColor: post.link_flair_background_color }}
                   >
                     {post.link_flair_text}
@@ -123,11 +123,11 @@ const RedditFeed = () => {
                     href={post.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-lg font-semibold"
+                    className="text-blue-600 hover:underline sm:text-lg font-semibold"
                   >
                     {he.decode(post.title)}
                   </a>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="sm:text-sm text-xs text-gray-500 mt-2">
                     {formatDate(post.created_utc)}
                   </p>
                 </div>

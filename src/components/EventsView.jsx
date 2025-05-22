@@ -88,37 +88,42 @@ const EventsView = () => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-between">
+    <div className="w-full sm:w-4/5 mx-auto flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-        <div className='flex justify-end w-full sm:w-auto gap-3'>
-          <input
-            type="date"
-            className="border px-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={currentWeekStart.toISOString().slice(0, 10)}
-            onChange={e => {
-              const selectedDate = new Date(e.target.value);
-              if (!isNaN(selectedDate)) {
-                setCurrentWeekStart(getStartOfWeek(selectedDate));
-              }
-            }}
-            aria-label="Jump to week by date"
-          />
-          {currentWeekStart.getTime() !== todayWeekStart.getTime() && (
-            <button
-              onClick={() => setCurrentWeekStart(todayWeekStart)}
-              className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
-            >
-              Today
-            </button>
-          )}
-          {firstFutureWeekStart && currentWeekStart.getTime() !== firstFutureWeekStart.getTime() && (
-            <button
-              onClick={() => setCurrentWeekStart(firstFutureWeekStart)}
-              className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
-            >
-              Next Event
-            </button>
-          )}
+        <div className='flex flex-row justify-between w-full gap-3'>
+          <div className='flex flex-row gap-2 items-center'>
+            <div>Go to</div>
+            <input
+              type="date"
+              className="border px-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 h-full"
+              value={currentWeekStart.toISOString().slice(0, 10)}
+              onChange={e => {
+                const selectedDate = new Date(e.target.value);
+                if (!isNaN(selectedDate)) {
+                  setCurrentWeekStart(getStartOfWeek(selectedDate));
+                }
+              }}
+              aria-label="Jump to week by date"
+            />
+          </div>
+          <div className='flex flex-row gap-2'>
+            {currentWeekStart.getTime() !== todayWeekStart.getTime() && (
+              <button
+                onClick={() => setCurrentWeekStart(todayWeekStart)}
+                className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
+              >
+                Today
+              </button>
+            )}
+            {firstFutureWeekStart && currentWeekStart.getTime() !== firstFutureWeekStart.getTime() && (
+              <button
+                onClick={() => setCurrentWeekStart(firstFutureWeekStart)}
+                className="p-2 bg-blue-500 text-white rounded-md text-sm sm:text-base hover:scale-110 transition"
+              >
+                Next Event
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex flex-row justify-between items-center mb-8 gap-2">
