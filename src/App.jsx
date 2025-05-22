@@ -1,8 +1,7 @@
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import RedditFeed from "./pages/RedditFeed";
+import { HashRouter } from "react-router-dom";
 import { GameProvider } from "./components/contexts/GameContext";
+import AnimatedRoutes from "./routes/AnimatedRoutes";
 
 const App = () => {
   document.title = process.env.REACT_APP_TITLE;
@@ -10,14 +9,11 @@ const App = () => {
   return (
     <GameProvider>
       <HashRouter>
-      <div className="min-h-screen flex flex-col">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/leaks-rumours" element={<RedditFeed />} />
-        </Routes>
-      </div>
-    </HashRouter>
-  </GameProvider>
+        <div className="min-h-screen flex flex-col">
+          <AnimatedRoutes />
+        </div>
+      </HashRouter>
+    </GameProvider>
   );
 };
 
