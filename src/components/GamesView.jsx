@@ -274,7 +274,7 @@ const GamesView = ({ games, openButtonRef }) => {
         </div>
       )}
 
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center mt-6">
         <div className="flex flex-row w-full gap-4 items-center justify-center">
           <button
             className={`${withRelease && "bg-blue-500 text-white"} disabled:opacity-80 disabled:hover:bg-blue-500 hover:bg-slate-200 w-fit px-2 py-1.5 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base transition`}
@@ -384,7 +384,7 @@ const GamesView = ({ games, openButtonRef }) => {
       </div>
 
       {/* Table */}
-      <div className="flex-col max-w-full overflow-x-auto hidden sm:flex -mt-4">
+      <div className="flex-col max-w-full overflow-x-auto hidden sm:flex mt-4">
         <div className="relative">
           <table className="w-full table-fixed border-collapse min-w-[900px]">
             <thead className="border-b">
@@ -422,7 +422,7 @@ const GamesView = ({ games, openButtonRef }) => {
       </div>
 
       {/* Cards */}
-      <div className="overflow-y-auto min-w-full sm:hidden pb-8">
+      <div className="overflow-y-auto min-w-full sm:hidden pb-8 mt-4">
         <div className="flex flex-col gap-5">
           {filtered.map(game => (
             <GameCard
