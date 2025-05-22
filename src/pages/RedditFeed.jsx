@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { GameProvider } from "../components/contexts/GameContext";
+import { GameProvider, useGame } from "../components/contexts/GameContext";
 import Layout from "../components/Layout";
 import he from 'he';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -9,6 +9,10 @@ const RedditFeed = () => {
   const [loading, setLoading] = useState(true);
   const [postLimit, setPostLimit] = useState(25);
   const [selectedFlair, setSelectedFlair] = useState("All");
+  const {
+    search,
+    highlightMatch,
+  } = useGame();
 
   function formatDate(utcSeconds) {
     const seconds = Math.floor(Date.now() / 1000 - utcSeconds);
@@ -55,11 +59,21 @@ const RedditFeed = () => {
     return ["All", ...Array.from(unique)];
   }, [posts]);
 
+  const filteredPosts = useMemo(() => {
+    if (!search) return posts;
+    const lowerSearch = search.toLowerCase();
+    return posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(lowerSearch) ||
+        (post.selftext && post.selftext.toLowerCase().includes(lowerSearch))
+    );
+  }, [posts, search]);
+
   const visiblePosts = useMemo(() => {
     return selectedFlair === "All"
-      ? posts
-      : posts.filter((post) => post.link_flair_text === selectedFlair);
-  }, [posts, selectedFlair]);
+      ? filteredPosts
+      : filteredPosts.filter((post) => post.link_flair_text === selectedFlair);
+  }, [filteredPosts, selectedFlair]);
 
   return (
     <Layout>
@@ -125,7 +139,7 @@ const RedditFeed = () => {
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline sm:text-lg font-semibold"
                   >
-                    {he.decode(post.title)}
+                    {highlightMatch(he.decode(post.title), search)}
                   </a>
                   <p className="sm:text-sm text-xs text-gray-500 mt-2">
                     {formatDate(post.created_utc)}
