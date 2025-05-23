@@ -38,8 +38,10 @@ const RedditFeed = () => {
       try {
         setLoading(true);
         const corsProxy = "https://corsproxy.io/?";
+        const safeLimit = Math.min(postLimit, 100); // Cap at 100
+        const timestamp = Date.now(); // Cache buster
         const redditUrl = encodeURIComponent(
-          `https://www.reddit.com/r/GamingLeaksAndRumours/new.json?limit=${postLimit}`
+          `https://www.reddit.com/r/GamingLeaksAndRumours/new.json?limit=${safeLimit}&_=${timestamp}`
         );
         const res = await fetch(`${corsProxy}${redditUrl}`);
         const json = await res.json();
@@ -53,8 +55,10 @@ const RedditFeed = () => {
       }
     };
 
+    console.log("Fetching with limit:", postLimit);
     fetchPosts();
   }, [postLimit]);
+
 
   const flairs = useMemo(() => {
     const unique = new Set(posts.map((p) => p.link_flair_text).filter(Boolean));
