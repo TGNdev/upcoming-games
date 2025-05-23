@@ -24,19 +24,25 @@ const Home = () => {
   } = useGame();
 
   useEffect(() => {
-    const june5Start = Timestamp.fromDate(new Date("2025-06-05T00:00:00"));
-    const june6Start = Timestamp.fromDate(new Date("2025-06-06T00:00:00"));
+    //Testing multiple featured games
+    //const june5Start = Timestamp.fromDate(new Date("2025-06-05T00:00:00"));
+    //const june6Start = Timestamp.fromDate(new Date("2025-06-06T00:00:00"));
 
-    const q = query(
-      collection(db, "games"),
-      where("release_date", ">=", june5Start),
-      where("release_date", "<", june6Start)
-    );
+    //const q = query(
+    //  collection(db, "games"),
+    //  where("release_date", ">=", june5Start),
+    //  where("release_date", "<", june6Start)
+    //);
 
-    const unsub = onSnapshot(q, (snapshot) => {
+    //const unsub = onSnapshot(q, (snapshot) => {
+    //  const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //  setGames(list);
+    //});
+
+    const unsub = onSnapshot(collection(db, "games"), snapshot => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setGames(list);
-    });
+    })
 
     return () => unsub();
   }, []);
